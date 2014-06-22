@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Pyodec Open file decoder</title>
-    
+    <base href="./" />
 
     <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -18,11 +18,18 @@
     <![endif]-->
   </head>
   <body>
+      
       <nav class="navbar navbar-default navbar-static-top" role="navigation">
           <div class="container">
               <div class="navbar-header">
+                  <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                     <span class="sr-only">Toggle navigation</span>
+                     <span class="icon-bar"></span>
+                     <span class="icon-bar"></span>
+                     <span class="icon-bar"></span>
+                  </button> 
                   <a class="navbar-brand" href="./">
-                     <img src='./images/logo.svg' style="width:30px;" />
+                     <img src='images/logo.svg' style="width:30px;" />
                      Pyodec
                   </a>
               </div>
@@ -31,15 +38,16 @@
                   <ul class="nav navbar-nav">
                     <li><a href="about/">About</a></li>
                     <li><a href="docs/">Documentation</a></li>
-                    <li><a href="formats/index.html">File Types</a></li>
+                    <li><a href="formats/">File Types</a></li>
                   </ul>
               </div>
           </div>
           
       </nav>
+      
       <div class="container">
           <div class="page-header">
-              <h1><img src='images/logo.svg' style="width:40px;" />
+              <h1><img src='images/logo.svg' style="width:80px;" />
                   Pyodec <small>An open-source data file decoder</small></h1>
             </div>
           <p class='lead'>
@@ -47,16 +55,81 @@
               non-structured data files, compiled by the scientific community,
               for the scientific community.
           </p>
+          
           <p>
-              Ideally in the least-bloated manner possible
+              
+              Created to enable consistent decoding of data log files from meteorological
+              instruments, the <b>Pyodec</b> package is able to reduce duplication
+              of efforts when trying to decode obscure, proprietary or otherwise 
+              unstructured data files. Using Pyodec, a researcher can both check
+              if there is already a reliable tool for decoding a certain obscure
+              data file, and if not, provide such a tool to the wider science community.
           </p>
-          <div class="well well-md">
-              <ol>
-                  <li>Accurate</li>
-                  <li>Diverse</li>
-                  <li>Fast</li>
-              </ol>
+          <div class="alert alert-info">
+              Pyodec will convert any known input data format
+              into a numpy recarray, either representing the entire file, or 
+              representing a slice of the file, when run as a generator.
+            </div>
+              
+              
+          
+          <h2>How it works</h2>
+          <div class="row">
+              <div class="col-md-4 text-center">
+                  <h3>Get &amp; test your file/string</h3>
+                  
+                      <img src="images/unknown.svg" style='width:80px'>
+                      <p>
+                      You may search the file types library, using any information
+                      you have about your file (instrument that created it, 
+                      company, dates)
+                  </p>
+                      <b>or</b> 
+                  <p>    
+                      you can pass your file to the 
+                      <code>detector</code> module, which will (slowly) try to
+                      find if there is a decoder in the libary that recognizes your file
+                  </p>
+                      
+              </div>
+              <div class="col-md-4 text-center">
+                  <h3>Decode your file</h3>
+                  <p>If a decoder exists, all you have to do is </p>
+                  <pre class="text-left">
+>>> import pyodec
+>>> pyodec.decode(filesrc, decoder="myfiledecoder")
+                  </pre>
+                  <b>or</b>
+                  <pre class="text-left">
+>>> import pyodec.deocders.myfiledecoder as thedecoder
+>>> thedecoder.decode(filesrc)
+                  </pre>
+              </div>
+              <div class="col-md-4 text-center">
+                  <h3>Write a new file decoder</h3>
+                  <p>
+                      If your file did not exist, then you were going to have to 
+                      write the code to decode it anyway. But using pyodec you can
+                      take advantage of the text file API
+                  </p>
+              </div>
           </div>
+          <p>
+              Pyodec can, and is, used for decoding structured and binary files as well. 
+              By creating a decoder, certain structured files can be even easier
+              to read, simply by having a decoder which produces a sorted recarray
+              from a CSV. Similarly, binary formats such as netCDF, which are very 
+              easy to read on their own, can be completely dumped to recarray objects,
+              if that is deemed to be of utility. These decoders should use standard
+              python structured file libraries, such as NumPy, scipy, pytables, etc. 
+          </p>
+          
+          
+         
+         
+         
+         
+         
       </div>
 
 
