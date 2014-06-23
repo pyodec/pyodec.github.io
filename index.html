@@ -66,37 +66,39 @@
           <h2>How it works</h2>
           <div class="row">
               <div class="col-md-4 text-center">
-                  <h3>Get &amp; test your file/string</h3>
+                  <h1 style="color:#FC0;">1. Find your decoder</h1>
                   
-                      <img src="images/unknown.svg" style='width:80px'>
-                      <p>
+                  <img src="images/search.svg" style='width:150px'>
+              </div>
+              <div class="col-md-8 text-left">
+                  <h3>Get &amp; test your file/string</h3>
+                  <p>
                       You may search the file types library, using any information
                       you have about your file (instrument that created it, 
                       company, dates)
                   </p>
                       <b>or</b> 
                   <p>    
-                      you can pass your file to the 
+                      You can pass your file to the 
                       <code>detector</code> module, which will (slowly) try to
-                      find if there is a decoder in the libary that recognizes your file
+                      find if there is a decoder in the libary that recognizes your file.
                   </p>
-                      
+                  
               </div>
-              <div class="col-md-4 text-center">
-                  <h3>Decode your file</h3>
+              <div class="col-md-12 text-center"><h3>then</h3></div>
+              <div class="col-md-6 text-center">
+                  <h1 style='color:#fc0'>2a. Decode your file</h1>
                   <p>If a decoder exists, all you have to do is </p>
                   <pre class="text-left">
 >>> import pyodec
->>> pyodec.decode(filesrc, decoder="myfiledecoder")
-                  </pre>
-                  <b>or</b>
-                  <pre class="text-left">
->>> import pyodec.deocders.myfiledecoder as thedecoder
->>> thedecoder.decode(filesrc)
-                  </pre>
+>>> pyodec.decode(filesrc, decoder="myfiledecoder")</pre>
+or
+<pre class="text-left">>>> import pyodec.deocders.myfiledecoder as thedecoder
+>>> thedecoder.decode(filesrc)</pre>
+<p>Or one of the several other ways you can call a decoder method on a file or string</p>
               </div>
-              <div class="col-md-4 text-center">
-                  <h3>Write a new file decoder</h3>
+              <div class="col-md-6 text-center">
+                  <h1 style="color:#FC0">2b. Write a new file decoder</h1>
                   <p>
                       If your file did not exist, then you were going to have to 
                       write the code to decode it anyway. But using pyodec you can
@@ -104,15 +106,7 @@
                   </p>
               </div>
           </div>
-          <p>
-              Pyodec can, and is, used for decoding structured and binary files as well. 
-              By creating a decoder, certain structured files can be even easier
-              to read, simply by having a decoder which produces a sorted recarray
-              from a CSV. Similarly, binary formats such as netCDF, which are very 
-              easy to read on their own, can be completely dumped to recarray objects,
-              if that is deemed to be of utility. These decoders should use standard
-              python structured file libraries, such as NumPy, scipy, pytables, etc. 
-          </p>
+          
           
           
          

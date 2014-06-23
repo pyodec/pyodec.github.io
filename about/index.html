@@ -57,7 +57,13 @@
             </div>
 
           <p>
-              Ideally in the least-bloated manner possible
+              Pyodec can, and is, used for decoding structured and binary files as well. 
+              By creating a decoder, certain structured files can be even easier
+              to read, simply by having a decoder which produces a sorted recarray
+              from a CSV. Similarly, binary formats such as netCDF, which are very 
+              easy to read on their own, can be completely dumped to recarray objects,
+              if that is deemed to be of utility. These decoders should use standard
+              python structured file libraries, such as NumPy, scipy, pytables, etc. 
           </p>
           <div class="well well-md">
               <ol>
