@@ -41,11 +41,21 @@
           <div class="page-header">
               <h1>About Pyodec</h1>
             </div>
-          <p class='lead'>
-              A library for simple decoding of a broad range of proprietary or 
-              non-structured data files, compiled by the scientific community,
-              for the scientific community.
+            <p>
+              
+              Created to enable consistent decoding of data log files from meteorological
+              instruments, the <b>Pyodec</b> package is able to reduce duplication
+              of efforts when trying to decode obscure, proprietary or otherwise 
+              unstructured data files. Using Pyodec, a researcher can both check
+              if there is already a reliable tool for decoding a certain obscure
+              data file, and if not, provide such a tool to the wider science community.
           </p>
+          <div class="alert alert-info">
+              Pyodec will convert any known input data format
+              into a numpy recarray, either representing the entire file, or 
+              representing a slice of the file, when run as a generator.
+            </div>
+
           <p>
               Ideally in the least-bloated manner possible
           </p>
