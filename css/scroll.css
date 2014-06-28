@@ -1,0 +1,59 @@
+#ref {
+    /*
+     * the box on the side with all the info
+     */
+    position:absolute;
+    width:170px;
+    line-height:1.4em
+    font-family:"Helvetica Neue",sans-serif;
+}
+
+#ref .h1 a {
+    color:#000;
+}
+#ref .h1{
+     margin-top:10px;
+     padding:0;
+     text-indent:0;
+     font-size:1.1em;
+}
+#ref .h2 a {
+    color:#000;
+}
+#ref .h2{
+     margin:0;
+     padding:3px;
+     font-size:.9em;
+}
+#ref .h3 a {
+    color:#666;
+}
+#ref .h3{
+     margin:0;
+     padding-left:10px;
+     font-size:.9em;
+}
+#ref .h4 a {
+    color:#555;
+}
+#ref .h4{
+     margin:0;
+     padding:3px;
+     font-size:.9em;
+}
+#ref .on {
+    font-weight:700;
+}
+#ref.floater{
+    position:fixed;
+    top:0;
+}
+.toplink {
+    height:15px;
+    margin-top:20px;
+    display:inline-block;
+    
+}
+.toplink:focus {
+    outline:0;
+}

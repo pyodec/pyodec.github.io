@@ -8,7 +8,9 @@
     <base href="./" />
 
     <!-- Bootstrap -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="bs/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="css/display.css" rel="stylesheet" />
+    
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -16,9 +18,10 @@
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
       <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="css/github.css" rel="stylesheet" />
   </head>
   <body>
-      
       <nav class="navbar navbar-default navbar-static-top" role="navigation">
           <div class="container">
               <div class="navbar-header">
@@ -44,77 +47,191 @@
           </div>
           
       </nav>
-      
-      <div class="container">
+      <a href="https://github.com/pyodec/pyodec"><img style="position: absolute; top: 50px; right: 0; z-index:1001; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
+
+      <div class="container marketing">
           
           <div class="jumbotron">
               <h1><img src='images/logo.svg' style="width:80px;" />
                   Pyodec </h1><h3>An open-source data file decoder</h3>
                   
                   <p class='lead'>
-		              A library for simple decoding of a broad range of proprietary or 
+		              A <a href="http://python.org">Python</a> library for simple decoding of a broad range of proprietary or 
 		              non-structured data files, compiled by the scientific community,
 		              for the scientific community.
 		          </p>
+		          <div class="text-center">
+		              <a class="btn btn-lg btn-success" href="docs/#GettingStarted" role="button">Get started today</a>
+		          </div>
+
             </div>
           
           
+         <div class="row featurette" style="color:#000">
+             <div class="col-md-4 text-center" >
+                 <h1>Save Time</h1>
+                 <p>
+                     Only write a decoder once, use decoders others have written, and use tools provided in the library to write decoders faster.
+                 </p>
+                 <a href="about/#save" class="btn btn-lg btn-default" role='button'>Learn more</a>
+             </div>
+             <div class="col-md-4 text-center">
+                 <h1>Decode Better</h1>
+                 <p>Minimize lazy shortcuts by writing less, and improving others' work. Get all the data, and get it correctly</p>
+                <a href="about/#better" class="btn btn-lg btn-default" role='button'>Learn more</a>
+             </div>
+             <div class="col-md-4 text-center">
+                 <h1>Simplify Science</h1>
+                 <p>With more and better decoders, researchers can skip
+                      the frustrating decoding process, and get on with their analysis</p>
+                 <a href="about/#simplify" class="btn btn-lg btn-default" role='button'>Learn more</a>
+             </div>
+         </div> 
+   
+          <hr class="featurette-divider" />
           
-              
-              
-          
-          <h2>How it works</h2>
-          <div class="row">
-              <div class="col-md-4 text-center">
-                  <h1 style="color:#FC0;">1. Find your decoder</h1>
+         
+          <div class="row featurette">
+              <div class="col-md-8 text-center feturette">
+                  <h1 class="featurette-heading" style='color:#090'>1. Find your decoder</h1>
                   
-                  <img src="images/search.svg" style='width:150px'>
-              </div>
-              <div class="col-md-8 text-left">
-                  <h3>Get &amp; test your file/string</h3>
-                  <p>
+                  
+              
+                  <p class='lead'>
                       You may search the file types library, using any information
                       you have about your file (instrument that created it, 
                       company, dates)
                   </p>
-                      <b>or</b> 
-                  <p>    
-                      You can pass your file to the 
+                     
+                  <p class="lead">    
+                      Or you can pass your file to the 
                       <code>detector</code> module, which will (slowly) try to
                       find if there is a decoder in the libary that recognizes your file.
                   </p>
+                  <a href="formats" class="btn btn-lg btn-default" role='button'>Find a decoder</a>
                   
               </div>
-              <div class="col-md-12 text-center"><h3>then</h3></div>
-              <div class="col-md-6 text-center">
-                  <h1 style='color:#fc0'>2a. Decode your file</h1>
-                  <p>If a decoder exists, all you have to do is </p>
-                  <pre class="text-left">
->>> import pyodec
->>> pyodec.decode(filesrc, decoder="myfiledecoder")</pre>
-or
-<pre class="text-left">>>> import pyodec.deocders.myfiledecoder as thedecoder
->>> thedecoder.decode(filesrc)</pre>
-<p>Or one of the several other ways you can call a decoder method on a file or string</p>
-              </div>
-              <div class="col-md-6 text-center">
-                  <h1 style="color:#FC0">2b. Write a new file decoder</h1>
-                  <p>
-                      If your file did not exist, then you were going to have to 
-                      write the code to decode it anyway. But using pyodec you can
-                      take advantage of the text file API
-                  </p>
+              <div class="col-md-4 text-center">
+              <img src="images/search.svg" style='width:100%;max-width:400px;'>
               </div>
           </div>
           
+          <div class="row featurette">
+              <div class="col-md-12 text-center"><hr class="featurette-divider"/></div>
+              
+              
+              
+              <div class="col-md-8 col-md-push-4 text-center">
+                  <h1 class="featurette-heading" style='color:#090'>2. Decode your file</h1>
+                  
+                  <p class="lead">If a decoder exists, all you have to do is </p>
+                  <pre class="text-left lead"><code>>>> import pyodec
+>>> pyodec.decode(filesrc, decoder="myfiledecoder")</code></pre>
+                    <p class="lead">or</p>
+                    <pre class="text-left lead"><code>>>> import pyodec.deocders.myfiledecoder as thedecoder
+>>> thedecoder.decode(filesrc)</code></pre>
+                    <p class='lead'>Or one of the several other ways you can call a decoder method on a file or string</p>
+                <a href="#" class="btn btn-lg btn-default" role='button'>The techniques of decoding</a>
+              </div>
+              <div class="col-md-4 col-md-pull-8 text-center">
+                  <img src="images/decode.svg" style='width:100%;max-width:400px;'>
+              </div>
+         
+         
+         </div>
+         <hr class="featurette-divider">
+         <div class="row featurette">     
+              
+              
+              <div class="col-md-8 text-center">
+                  <h1 class="featurette-heading" style='color:#090'>Or, write a new file decoder</h1>
+                  <p class="lead">
+                      At the beginning, Pyodec is not going to have every decoder ready to go.
+                      
+                  </p>
+                  <p class='lead'>
+                      You can use the tools and base classes of Pyodec to write
+                      your own standalone decoder, which can then be pulled into
+                      the package easily once you have gotten it working.
+                  </p>
+                  <a href="#" class="btn btn-lg btn-default" role='button'>Learn about writing decoders</a>
+              </div>
+              <div class="col-md-4 text-center">
+                  <img src="images/edit.svg" style="width:100%;max-width:400px;" />
+              </div>
+          </div>
           
+              
+          <hr class="featurette-divider" />
+          <div class="text-center row well">
+              <h1>Get Pyodec</h1>
+              <p class="lead">
+                  <a class="btn btn-info btn-lg" style="margin:10px;">Latest Release</a> 
+                  <a class="btn btn-info btn-lg "><i class="fa fa-git"></i> Github Project</a>
+              </p>
+          </div>   
+          <hr class="featurette-divider" />
+             
+          <h1>How pyodec is already used</h1>
+          <p class="lead">This may all seem somewhat trivial, so here is a real-world example of 
+              how this software is used.</p>
           
-         
-         
-         
-         
-         
-      </div>
+          <div class="row featurette">
+                       
+                      <div class="col-md-9 col-md-push-3">
+                          <h3 class="featurette-heading">Ceilometer backscatter</h3>
+                          <p class="lead">We wanted to read backscatter profiles from an instrument
+                              intended to produce only algorithm output from that profile. The backscatter
+                              profiles were hidden in log files, which each profile encoded like this:
+                              </p>
+                          <pre>
+^A
+-2011-01-19 18:00:04
+CL017121^B
+10 03670 ///// ///// 00000000C000
+  8 012  0 ///  0 ///  0 ///  0 ///
+00100 10 0770 100 +27 100 01 0025 L0016HN15 221
+0228b00f1600cdf0125101541012ab011bd00ff500f6e00e9000dc100cfd00c440....fff4affeccfff750003e00059fff42ffed8ffeefffd4dffcd5ff
+^Ca394^D</pre>
+                          <p class="lead">
+                              But, we could read this data as a text file, and once
+                              we had a proper decoder written for the long line of data,
+                              it was simple to get a set of backscatter profiles from 
+                              any of these log files.
+                          </p>
+                          <p class="lead">
+                              This is how <code>pyodec</code> came to be. Now, since
+                              Vaisala CL-31 data files are supported, all you have to
+                              do is call
+                              <pre><code>pyodec.decode('ceilometerfile.dat',decoder='vaisalaCl31msg2')</code></pre>
+                              
+                          </p>
+                          
+                      </div>
+                      <div class="col-md-3 col-md-pull-9 text-center">
+                          <img src="images/ceil.jpg" style="width:100%;max-width:256px;" />
+                          
+                      </div>
+          </div>
+          <hr class="featurette-divider" />
+          <div class="well">
+                      <p class="lead" style="font-weight:500">
+                              What Pyodec can do is make reading files like this easier. 
+                              You need one researcher or developer who can properly develop
+                              a decoder, but from that point on, your researchers can use these
+                              kinds of data files without having to know how to catch an EOM
+                              character, or compute a two's-compliment.
+                          </p>
+    
+          </div>
+          <div class="row featurette text-center">
+              <a href="docs/#GettingStarted" class="btn btn-lg btn-success">
+                  Let's get started!
+              </a>
+          </div>
+          
+      
+      </div> <!-- content -->
 
 
 
@@ -124,19 +241,15 @@ or
 
 
 
-    <nav class="navbar navbar-default navbar-fixed-bottom" role="navigation">
+    <footer>
         <div class="container">
-            <p class="navbar-text">
-                &copy; 2014 MesoWest &amp; The University of Utah
+            <p>
+                &copy; 2014 MesoWest &amp; The University of Utah -
+                <a href="legal/">Legal</a> - <a href="site/">About this site</a>
             </p>
-            <div class="collapse navbar-collapse">
-                <ul class="nav navbar-nav">
-                    <li><a href="legal/">Legal</a></li>
-                </ul>
-            </div>
         </div>
         
-    </nav>
+    </footer>
 
 
 
@@ -148,6 +261,10 @@ or
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="js/bootstrap.min.js"></script>
+    <script src="bs/js/bootstrap.min.js"></script>
+    <script src="http://yandex.st/highlightjs/8.0/highlight.min.js"></script>
+    <script type="text/javascript">
+        hljs.initHighlightingOnLoad();
+    </script>
   </body>
 </html>

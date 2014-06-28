@@ -5,10 +5,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Pyodec Open file decoder</title>
-    <base href="../" />
 
     <!-- Bootstrap -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="/bs/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/scroll.css" rel="stylesheet">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -16,83 +16,202 @@
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
       <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+    
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+    
+    <link href="/css/github.css" rel="stylesheet" />
+    
+    <!--<link href="http://getbootstrap.com/assets/css/docs.min.css" rel="stylesheet">-->
   </head>
   <body>
       <nav class="navbar navbar-default navbar-static-top" role="navigation">
           <div class="container">
               <div class="navbar-header">
+                  <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                     <span class="sr-only">Toggle navigation</span>
+                     <span class="icon-bar"></span>
+                     <span class="icon-bar"></span>
+                     <span class="icon-bar"></span>
+                  </button> 
                   <a class="navbar-brand" href="./">
-                     <img src='images/logo.svg' style="width:30px;" />
+                     <img src='/images/logo.svg' style="width:30px;" />
                      Pyodec
                   </a>
               </div>
               <!-- nav content and stuff... -->
               <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                   <ul class="nav navbar-nav">
-                    <li><a href="about/">About</a></li>
-                    <li><a href="docs/">Documentation</a></li>
-                    <li><a href="formats/">File Types</a></li>
+                    <li><a href="/about/">About</a></li>
+                    <li><a href="/docs/">Documentation</a></li>
+                    <li><a href="/formats/">File Types</a></li>
                   </ul>
               </div>
           </div>
           
       </nav>
       <div class="container">
-          <div class="page-header">
-              <h1>Pyodec Documentation</h1>
+        <div class="row" id="ref_contents">
+            <div class="col-md-2" id="ref"></div>
+            <div class="col-md-10 col-md-push-2" role="main">
+                <h1>Pyodec Documentation</h1>
+                <p class="lead">
+                    Welcome to Pyodec. This is the reference to the library of
+                    core resources and techniques within the package.
+                </p>
+                <h1>Getting Started</h1>
+                <p class="lead">
+                    How to hit the ground running with pyodec. 
+                </p>
+                
+                
+                <h2>Installation</h2>
+                <p>Download a distribution, or clone a version of the repo from Github, and 
+                    execute the setup script in the traditional fashion.
+                </p>
+                <pre><code>$ python setup.py install</code></pre>
+                <p>Append <code>--user</code> to install the package only for the local user.</p>
+                <p>This is for Linux/Unix installations, and will make <code>pyodec</code> available
+                    for import in locally run python executables. To <b>update</b>, simply
+                    download a newer version of the code, (ie a new release) and execute
+                    the update script as well with the same command.
+                </p>
+                <p>Pyodec may be added to <code>pypi</code> some day, but at this time
+                    it must be installed manually</p>
+                    
+                    
+                    
+                <h3>Dependencies</h3>
+                <p>
+                    The basic modules of pyodec currently require only Python 2.7 or greater
+                    (this library is not currently written in python 3), and NumPy. 
+                    However, certain decoders may leverage other libraries, particularly
+                    certain types of binary file decoders. Those dependencies will be
+                    exposed when importing/executing the specific decoder module.
+                </p>
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">Future dependencies</h4>
+                    </div>
+                    <div class="panel-body">
+                        <p>Current dependencies may not reflect installation 
+                            requirements in the future.</p>
+
+                    </div>
+                </div>
+                
+                
+                <h2>Decoding with Pyodec</h2>
+                <p class="lead">
+                    Pyodec offers two ways to access the <code>decode</code> method
+                    for any specific file decoder. One is based on the core
+                    library, where you pass the name of the decoder to use, and the 
+                    <code>decode</code> method is returned. Alternatively you can
+                    utilize the strucutre of the Pyodec package, and directly import
+                    the decoder module, to access its <code>decode</code> method.
+                </p>
+                <h3>Accessing the decoder</h3>
+                <p>
+                    Pyodec is structured where decoders are stored in a 
+                    module called <code>files</code>. To access a decoder, say
+                    <code>vaisalaCl31msg2</code>, you could directly access it with
+                    
+                    
+                </p>
+                <pre><code>import pyodec.files.vaisalaCl31msg2 as decoder
+>>> data = decoder.decode(src)</code></pre>
+                <p>
+                    so the <code>decode</code> method is an available method within
+                    the named decoder module. This decoder, in return, is an instantiated
+                    member of the decoder class contained within the module, which inherits the 
+                    core <code>FileDecoder</code> methods, along with some decoder
+                    metadata.
+                </p>
+                <p>Every properly constructed decoder will have a <code>decoder</code> attribute, which
+                    is executable. There are several other variables within a decoder
+                    module, one of which being the decoder's class, but you will have to
+                    look at the docs for that specific decoder to work with those, as their names
+                    are not fixed.
+                </p>
+                <h4>Using simple decoder access</h4>
+                <p>
+                    Another way to access a decoder is to import and call 
+                    <code>pydec.decode</code>, which is a compressed function
+                    which will load and exectue the decoder you want, when passed as a
+                    string argument. Passing a decoder is required for this method.
+                    Here is an example of using it to decode <code>src</code> as above.
+                </p>
+                <pre><code>import pyodec
+>>> pyodec.decode(src, decoder='vaisalaCl31msg2')</code></pre>
+                <p>
+                    This slightly simplifies the importing process, but to customize
+                    how your code uses a decoder, it is necessary to
+                </p>
+                <h3>Running a decoder</h3>
+                <p>
+                    There are two ways to decode, first, can decode as a procedural
+                    process, where an entire file or dataset is decoded, and the 
+                    output is returned. Alternatively you can run the decoder
+                    as a generator, (assuming the returned data can be grouped in
+                    some fashion), where you can control how many values are returned
+                    per iteration. 
+                </p>
+                <h4>Iterative decoding</h4>
+                <p>
+                    Assuming your data file will produce groups of data (like 
+                    such as a collection of obseravations), a decoder can run
+                    in a while loop, as a generator, returning a list of sets
+                    every N sets (N defaults to 1000)
+                </p>
+                <pre><code>for data in pyodec.decode(src, 'decoderName', limit=1000):
+    # do something with decoded collection of data points</code></pre>    
+                <p>
+                    The decode method will recognize that it is being called in a loop,
+                    and will yield data at points, instead of the entire data file.
+                    When a data file is finished, and there are &lt; N sets int the 
+                    dataset, they are yielded, so no data are missed.
+                </p>
+                <h4>Sequential decoding</h4>
+                <p>
+                    Alternatively you can decode an entire file at once, which
+                    is simpler, and for data files which are not broken into 
+                    discrete observations, is the equivalent behavior to the iterative
+                    process.
+                   
+               </p>
+               <pre><code>data = pyodec.decode(src, 'decoderName')</code></pre>
+               <p class="lead">
+                   And that is how you use pyodec, should you have an existing decoder
+                   available for your data file (and how you use it once you have built
+                   a decoder for your file)
+               </p>
+               <h3>Building a decoder</h3>
+               <p>
+                   Well, this isn't really a "getting started" scenario, unfortunately. 
+                   Read further down in the docs for the guide on developing a decoder.
+               </p>
             </div>
-          <p class='lead'>
-              For both using and developing additional decoders for Pyodec.
-          </p>
-          <p>
-              Ideally in the least-bloated manner possible
-          </p>
-          <div class="well well-md">
-              <ol>
-                  <li>Accurate</li>
-                  <li>Diverse</li>
-                  <li>Fast</li>
-              </ol>
-          </div>
-      </div>
-
-
-
-
-
-
-
-
-
-    <nav class="navbar navbar-default navbar-fixed-bottom" role="navigation">
+            
+        </div>
+    </div>
+    
+    <footer>
         <div class="container">
-            <p class="navbar-text">
-                &copy; 2014 MesoWest &amp; The University of Utah
+            <p>
+                &copy; 2014 MesoWest &amp; The University of Utah -
+                <a href="/legal/">Legal</a> - <a href="/site/">About this site</a>
             </p>
-            <div class="collapse navbar-collapse">
-                <ul class="nav navbar-nav">
-                    <li><a href="legal/">Legal</a></li>
-                </ul>
-            </div>
         </div>
         
-    </nav>
-
-
-
-
-
-
-
-
-
-
-
-
+    </footer>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="js/bootstrap.min.js"></script>
+    <script src="/bs/js/bootstrap.min.js"></script>
+    <script src="/js/scroll.js"></script> 
+    <script src="/js/highlight.pack.js"></script>
+    <script type="text/javascript">
+        hljs.initHighlightingOnLoad();
+    </script>
   </body>
 </html>
