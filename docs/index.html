@@ -33,7 +33,7 @@
                      <span class="icon-bar"></span>
                      <span class="icon-bar"></span>
                   </button> 
-                  <a class="navbar-brand" href="./">
+                  <a class="navbar-brand" href="/">
                      <img src='/images/logo.svg' style="width:30px;" />
                      Pyodec
                   </a>
@@ -156,30 +156,43 @@
                     per iteration. 
                 </p>
                 <h4>Iterative decoding</h4>
+                <p class="text-warning">
+                    <span class="label label-warning">Warning</span> 
+                    Pyodec currently <em>only</em> returns an iterator object.
+                </p>
                 <p>
                     Assuming your data file will produce groups of data (like 
                     such as a collection of obseravations), a decoder can run
-                    in a while loop, as a generator, returning a list of sets
-                    every N sets (N defaults to 1000)
+                    in a for loop, as a generator, returning a list of sets
+                    every N sets (N defaults to 1000). This is Pyodec's default 
+                    behavior. For data files which are not broken into 
+                    discrete observations, or in some way do not fit this data
+                    model, all the data will be returned at once, via the generator.
                 </p>
                 <pre><code>for data in pyodec.decode(src, 'decoderName', limit=1000):
-    # do something with decoded collection of data points</code></pre>    
+    # do something with decoded collection of data points
+
+#or
+
+import pyodec.files.decoderName
+for data in pyodec.files.decoderName.decode(src, limit=1000):
+    # do an equivalent something wit the returned data</code></pre>    
                 <p>
-                    The decode method will recognize that it is being called in a loop,
-                    and will yield data at points, instead of the entire data file.
+                    
+                    The <code>limit</code> argument is optional.
                     When a data file is finished, and there are &lt; N sets int the 
                     dataset, they are yielded, so no data are missed.
                 </p>
                 <h4>Sequential decoding</h4>
                 <p>
-                    Alternatively you can decode an entire file at once, which
-                    is simpler, and for data files which are not broken into 
-                    discrete observations, is the equivalent behavior to the iterative
-                    process.
+                    As a wrapper around the generator function, you can pass the 
+                    argument <code>generator=False</code>, which will then execute
+                    the generator internally, and return a single set of values. 
                    
                </p>
-               <pre><code>data = pyodec.decode(src, 'decoderName')</code></pre>
-               <p class="lead">
+               <pre><code>data = pyodec.decode(src, 'decoderName', generator=False)</code></pre>
+               
+               <p>
                    And that is how you use pyodec, should you have an existing decoder
                    available for your data file (and how you use it once you have built
                    a decoder for your file)
@@ -189,7 +202,216 @@
                    Well, this isn't really a "getting started" scenario, unfortunately. 
                    Read further down in the docs for the guide on developing a decoder.
                </p>
-            </div>
+               
+               
+               <h1>Protocols and rules</h1>
+               <span class="label label-info">Under Development</span>
+               <p class="lead">
+                   Though Pyodec is really a loosely connected set of independently
+                   written codes, it is important for the data model API to 
+                   be compatible between different decoders. The goal of these
+                   rules will be to allow a single piece of code to take a diverse
+                   set of files (knowing their decoders), and both decode them and
+                   look at the data with the same code.
+               </p>
+               <p>
+                   Basic python rules for internal consistency, variable and method
+                   naming, etc. should be followed.
+               </p>
+               <p>
+                   This is python, so there are no private methods. Rewrite/reallocate
+                   any internal method as you please, but when doing so please try
+                   to follow these usage guidelines. If you find a better way to 
+                   do the central <code>decode</code> method, then share it!
+               </p>
+               <h2>Input &amp; client interfacing</h2>
+               <p>
+                   Decoders should accept <b>file path string</b>, <b>file object</b>,
+                   and (where possible) <b>string</b> inputs to the decoder method as the 
+                   first argument.
+                   
+               </p>
+               <p>
+                   At a minimum, a decoder class should contain a <code>decode</code>
+                   method which can be run conforming to these input and interface
+                    protocols.
+               </p>
+               <p>
+                   Decoders should produce a generator object, (usually using <code>yield</code>),
+                   and should allow the keyword argument <code>generator</code> control
+                   whether a generator or list is returned. <code>generator</code> should
+                   default to <code>True</code>.
+               </p>
+               <br />
+               <!-- extra keyword arguments -->
+               <h4>Required <code>.decode()</code> keyword arguments</h4>
+               <table class="table">
+                   <thead>
+                       <tr><th>Argument</th><th>Type</th><th>Purpose</th></tr>
+                   </thead>
+                   <tbody>
+                       <tr>
+                           <td><code>limit</code></td>
+                           <td>int</td>
+                           <td>Number of discrete data results to accumulate before yielding</td>
+                       </tr>
+                       <tr>
+                           <td><code>generator</code></td>
+                           <td>bool</td>
+                           <td>
+                               Produce a generator based on <code>limit</code>, 
+                               or a single set of values representing the entire dataset.
+                               <br />
+                               <span class="label label-danger">Warning</span> Not all
+                               decoders at this time implement this protocol, and simply
+                               return generators at all times.
+                           </td>
+                       </tr>
+                   </tbody>
+               </table>
+               <p><em>
+                   These input requirements will evolve and expand over time 
+                   (such as a requirement to handle certain keyword arguments properly)
+               </em></p>
+               <h2>Data output and returning</h2>
+               <p>
+                   The possible range of outputs is far more diverse than the possible
+                   inputs, however there are a few goals that can be shared.
+               </p>
+               <h4>Discrete observations are collected in a list</h4>
+               <p>Not the other way around. <b>This is less efficient with memory</b>, but
+                   it is conceptually much simpler, and allows the second rule to
+                   actually work. </p>
+               <div class="text-center">
+                   <pre><code>yield [{'var1':12,'var2':[4,4,4]}, {'var1':12,'var2':[5,5,5]}, ... ]</code></pre>
+                   not
+                   <pre><code>yield {'var1':[12,12,14], 'var2': [[4,4,4],[5,5,5],[6,7,4]]}</code></pre>
+                   
+               </div>
+               <div class="alert alert-info" role="alert">
+                   <div class="fa fa-info-circle"></div> <b>Note:</b> acutual observations should be lists or numpy recarrays, 
+                   not dictionaries. Variables, column names, or their equivalents
+                   are handled in the metadata portion of the protocol.
+               </div>
+               
+               <h4>Iterative and sequential output are the same structure</h4>
+               <p>
+                   Simply, you interact with a returned list of values in the same
+                   manner, whether you receive them from a <code>yield</code> or a
+                   <code>return</code>.
+               </p>
+               <h2>Variable and data descriptions</h2>
+               <p>
+                   This is the least-defined rule of the library. Many data files are 
+                   self-describing in some manner, and it is essential to extract this
+                   metadata from files. However, in the observation-based return schema
+                   described above, metadata would not necessarily be included as 
+                   discrete sets of data. The current best-practice for handling metadata --
+                   and a method built into Pyodec -- is to add variable names, and descriptions
+                   to the decoder itself. 
+               </p>
+               <p>
+                   Pyodec surfaces two class objects which can, and should, be used
+                   for logging and sharing the variables within the decoded file. 
+                   These are                    
+               </p>
+               <table class="table">
+                   <thead><tr><th>Class</th><th>Purpose</th></tr></thead>
+                   <tbody>
+                       <tr>
+                           <td><code>VariableList</code></td>
+                           <td>
+                               The description of the values that are stored in
+                               each discrere observation.
+                           </td>
+                       </tr>
+                       <tr>
+                           <td><code>FixedVariableList</code></td>
+                           <td>
+                               Each variable which is a consant throughout the dataset, 
+                               such as <code>height</code> in a profiler dataset.
+                           </td>
+                       </tr>
+                   </tbody>
+               </table>
+               <p>
+                   These classes/objects contain the column/variable name, the 
+                   ideal numpy dtype for that column, a shape vector, a long name, 
+                   and a unit. Long name can be omitted, but really shouldn't.
+                   As it is currently designed, varaibles must be appended to the 
+                   list in the order which they will be found in the dataset. 
+                   <code>FixedVariableList</code> objects contain the data within them,
+                   such as the height values, or elevation angles, so order is 
+                   unimportant.
+                  
+               </p>
+               <p>
+                   Usually you will specify these values manually in the decoder
+                   code. But it is certainly possible to do it programatically, 
+                   but the information can be hard to acquire. When you instantiate
+                   your decoder class, you can also inherit the <code>VariableList</code>
+                   and/or <code>FixedVariableList</code> from another class. 
+               </p>
+               <p>
+                   By using these two objects, and appending them to the decoder 
+                   class on instantiation will provide the client user with several
+                   ways to access metadata. 
+                   
+                   
+               </p>
+               <p>
+                   Each returned decoder instance will have methods <code>.getvars()</code>,
+                   <code>.get_fixed_vars()</code>, and <code>.get_dtype()</code> in addition
+                   to the instance attributes <code>.vars</code> and <code>.fixed_vars</code>.
+                   They function as follows
+               </p>
+               <table class="table">
+                   <thead><tr><th>Method</th><th>Function</th></tr></thead>
+                   <tbody>
+                       <tr>
+                           <td><code>.getvars()</code></td>
+                           <td>
+                               Return a list of dictionaries containing name, dtype and shape info.
+                           </td>
+                       </tr>
+                       <tr>
+                           <td><code>.get_fixed_vars()</code></td>
+                           <td>
+                               Return similar info to <code>.getvars()</code>, but includes the 
+                               actual data files as well.
+                           </td>
+                       </tr>
+                       <tr>
+                           <td><code>.get_dtype()</code></td>
+                           <td>
+                               Return a valud Numpy-recarray dtype description, such that you could say
+                               <pre><code>import pyodec.files.myDecoder as dec
+import numpy as np
+for data in dec.decode(src):
+    data0_in_numpy = np.array(data[0], dtype = dec.get_dtype())</code></pre>
+                           </td>
+                       </tr>
+                       <tr>
+                           <td><code>.vars</code></td>
+                           <td>An attribute that contains the original <code>VariableList</code> object, and all its information/methods</td>
+                       </tr>
+                       <tr>
+                           <td><code>.fixed_vars</code></td>
+                           <td>An attribute that contains the original <code>FixedVariableList</code> object, and all its information/methods</td>
+                       </tr>
+                   </tbody>
+               </table>
+               <p><i>
+                   As noted, these variable/metadata requirements are not set in
+                   stone, and will likely change through development with
+                   other users. Obviously backwards compatibility will become
+                   an issue pretty quickly, however.
+               </i></p>
+               <h1>Core objects and methods</h1>
+               
+               
+               <h1>Writing a decoder</h1> 
+            </div> <!-- documentation div -->
             
         </div>
     </div>

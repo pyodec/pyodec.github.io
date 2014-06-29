@@ -18,7 +18,7 @@ $(function(){
         var type=tag[0].localName
         if (type=="h4" || type=='h5') continue
         //$("<a/>",{href:"#top"}).html("(top)").insertAfter(tag)
-        link_tag  = tag.html().replace(/ /g,"").replace(/\//g,"-").replace(/&/,'+');
+        link_tag  = tag.html().replace(/ /g,"").replace(/\//g,"-").replace(/&amp;/,'+');
         //FIXME - this tag behaves poorly when the <h> is wrapped in an <a> tag already...
         $("<a />",{id:link_tag,href:'#top',class:'toplink'}).html("<span class='fa fa-chevron-circle-up'> top</span>").insertBefore(tag)
         headings.push([type,tag,link_tag]);
