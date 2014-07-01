@@ -7,8 +7,9 @@
     <title>Pyodec Open file decoder</title>
 
     <!-- Bootstrap -->
-    <link href="/bs/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/css/scroll.css" rel="stylesheet">
+    <link href="/bs/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/css/scroll.css" rel="stylesheet" />
+    <link href="/css/docs.css" rel="stylesheet" />
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -83,7 +84,7 @@
                 <h3>Dependencies</h3>
                 <p>
                     The basic modules of pyodec currently require only Python 2.7 or greater
-                    (this library is not currently written in python 3), and NumPy. 
+                    (this library is not currently written in python 3), and <code>numpy</code>, along with the standard libraries that come with python 2.7, such as <code>gzip</code>. 
                     However, certain decoders may leverage other libraries, particularly
                     certain types of binary file decoders. Those dependencies will be
                     exposed when importing/executing the specific decoder module.
@@ -244,20 +245,22 @@ for data in pyodec.files.decoderName.decode(src, limit=1000):
                </p>
                <br />
                <!-- extra keyword arguments -->
-               <h4>Required <code>.decode()</code> keyword arguments</h4>
+               <h4>Available <code>.decode()</code> keyword arguments</h4>
                <table class="table">
                    <thead>
-                       <tr><th>Argument</th><th>Type</th><th>Purpose</th></tr>
+                       <tr><th>Argument</th><th>Type</th><th>Default</th><th>Purpose</th></tr>
                    </thead>
                    <tbody>
                        <tr>
                            <td><code>limit</code></td>
                            <td>int</td>
+                           <td><code>1000</code></td>
                            <td>Number of discrete data results to accumulate before yielding</td>
                        </tr>
                        <tr>
                            <td><code>generator</code></td>
                            <td>bool</td>
+                           <td><code>False</code></td>
                            <td>
                                Produce a generator based on <code>limit</code>, 
                                or a single set of values representing the entire dataset.
@@ -283,9 +286,9 @@ for data in pyodec.files.decoderName.decode(src, limit=1000):
                    it is conceptually much simpler, and allows the second rule to
                    actually work. </p>
                <div class="text-center">
-                   <pre><code>yield [{'var1':12,'var2':[4,4,4]}, {'var1':12,'var2':[5,5,5]}, ... ]</code></pre>
+                   <pre><code>yield [(12,[4,4,4]), (12,[5,5,5]), ... ]</code></pre>
                    not
-                   <pre><code>yield {'var1':[12,12,14], 'var2': [[4,4,4],[5,5,5],[6,7,4]]}</code></pre>
+                   <pre><code>yield [[[12,12,...],[[4,4,4],[5,5,5],...]]</code></pre>
                    
                </div>
                <div class="alert alert-info" role="alert">
@@ -304,7 +307,239 @@ for data in pyodec.files.decoderName.decode(src, limit=1000):
                <p>
                    This is the least-defined rule of the library. Many data files are 
                    self-describing in some manner, and it is essential to extract this
-                   metadata from files. However, in the observation-based return schema
+                   metadata from files.
+               </p>
+               <p>
+                    The current procedure for a decoder class object to reveal the descriptions
+                    of the variables is through three methods with the following
+                    functionality.
+               </p>
+               <table class="table">
+                   <thead><tr><th>Method</th><th>Function</th></tr></thead>
+                   <tbody>
+                       <tr>
+                           <td><code>.getvars()</code></td>
+                           <td>
+                               Return a list of dictionaries containing name, dtype and shape info,
+                               whose indices correspond to the index of the returned dataset 
+                               (e.g. column names and descriptions).
+                           </td>
+                       </tr>
+                       <tr>
+                           <td><code>.get_fixed_vars()</code></td>
+                           <td>
+                               Return similar info to <code>.getvars()</code>, but includes the 
+                               actual data elements as well, since fixed vars are not
+                               yielded with the rest of the data by default.
+                           </td>
+                       </tr>
+                       <tr>
+                           <td><code>.get_dtype()</code></td>
+                           <td>
+                               Return a valud Numpy-recarray dtype description, such that you could say
+                               <pre><code>import pyodec.files.myDecoder as dec
+import numpy as np
+for data in dec.decode(src):
+    data0_in_numpy = np.array(data[0], dtype = dec.get_dtype())</code></pre>
+                           </td>
+                       </tr>
+                   </tbody>
+               </table>
+               <p>
+                    By default, the return values of these methods are defined by the 
+                    <code><a href="#VariableListsandFixedVariableLists">VariableList</a></code>
+                     and <code><a href="#VariableListsandFixedVariableLists">FixedVariableList</a></code> class
+                    objects, but as always, the functionality can be overwritten in a decoder
+                    class when necessary.
+               </p>
+                <p><i>
+                   As noted, these variable/metadata requirements are not set in
+                   stone, and will likely change through development with
+                   other users. Obviously backwards compatibility will become
+                   an issue pretty quickly, however.
+               </i></p>
+                
+                <h2>Naming conventions</h2>
+                <p>
+                    In accordance with python convention, classes will be in CamelCase,
+                    and everything else will be in lowercase with underscores. However, there
+                    is some inconsistency regarding naming of decoders, and decoder modules.
+                </p>
+                <p>
+                    The current naming convention for the files that contain the decoders is 
+                    to use lowercase and underscores where necessary. 
+                </p>
+                <p>
+                    This is up for debate.
+                </p>
+              
+               
+               
+               
+               
+               <h1>Core objects and methods</h1>
+               <p class="lead">
+                When using the Pyodec decoders, you mostly only need to know
+                the getting started guides, and the protocols of the library. However, if 
+                you want to write a decoder, it is important that you understand the tools
+                that are made available to the developer, and how they are used.
+               </p>
+               <p>
+                    The following documentation outlines the classes and methods that are
+                    shared among all of the original decoders. Many of the features presented
+                    here are to enable compliance with the protocols outlined above. Ideally
+                    they can help making the development of a decoder simpler as well.
+                    
+               </p>
+               <p>
+                   These classes are located in the <code>pyodec.core</code> directory, and 
+                   should be imported from there.
+               </p>
+                <h2>The Decoder Class</h2>
+                <p>
+                    A file decoder should inherit the <code>Decoder</code> class. The main function of the decoder class is to facilitate variable (metadata) import, inheritance, and managment for a decoder instance.
+                </p>
+                <h4>Initialization</h4>
+                <p>
+                    A <code>Decoder</code> object is initialized with one or two keyword
+                    arguments
+                    <pre><code>__init__(vars=False, inherit=False, fixed_vars={})</code></pre>
+                    <dl>
+                        <dt>vars</dt>
+                        <dd>A description of the contained variables (Ideally a <code>VariableList</code> object)</dd>
+                        <dt>inherit</dt>
+                        <dd>
+                            A different <code>Decoder</code> descendant (another <code>FileDecoder</code> or a <code>MessageDecoder</code>) from which variable information can be imported)
+                        </dd>
+                        <dt>fixed_vars</dt>
+                        <dd>The description and values of fixed variables within the dataset. Like <code>vars</code> this behaves best with a <code>FixedVariableList</code> object.</dd>
+                    </dl>
+                </p>
+                <p>
+                    A <code>Decoder</code> object must be initialized with either <code>vars</code> or <code>inherit</code> defined, or else it will fail. 
+                </p>
+            <div class="alert alert-info"><b>Caution</b> there is no de-facto method of checking whether or not the number of variables indicated in the <code>vars</code> object is actually related to the data returned. If this is not the case, the most obvious place where it will break is in the end-user's code when they are attempting to utilize the data and metadata.</div>
+            
+                <h4> Methods</h4>
+            <dl>
+                <dt><pre class="python"><code>getvars()</code></pre></dt>
+                <dd>Wrapper for the <code>self.vars.getvars()</code> method of the contained <code>VariableList</code> object. Returns a list of dictionaries corresponding to the variables produced by the <code>Decoder</code> inheritant.</dd>
+                
+                <dt><pre class="python"><code>get_fixed_vars()</code></pre></dt>
+                <dd>Like <code>getvars()</code> this returns the <code>self.fixed_vars.getvars()</code> method resut. Returns a list of dictionaries corresponding to the decoder's fixed variables</dd>
+                <dt><pre class="python"><code>get_dtype()</code></pre></dt>
+                <dd>Produces a numpy-recarray-valid dtype string for the data variables (not fixed)</dd>
+            </dl>
+               <h2>The FileDecoder Class</h2>
+            <p>
+                This is the primary descendant of the <code>Decoder</code> class, and is for the development of decoders which read in individual string or gzipped files. <strong>An individual decoder, if designed to handle files, should inherit the <code>FileDecoder</code> class.</strong>
+            </p>
+             <div class="alert alert-danger"><b>Warning</b> due to a current compatibility issue, the file reading methods in the <code>FileDecoder</code> class will not read lines beginning with <code>::</code> (two colons).</div>
+            <p>
+                The initialization method is the same as for the <code>Decoder</code> class.
+            </p>
+            <h4>Class Methods</h4>
+            <p>The <code>FileDecoder</code> class exposes a simple file opening utility that can be used both within an instance, and outside of it.</p>
+            <dl>
+                <dt><pre><code>open_ascii( filepath )</code></pre></dt>
+                <dd>Open either an ASCII-text file (not actually ASCII-restricted) and return the file handle. Also opens gzipped text files (with the extension <code>.gz</code>) using the <code>gzip</code> library.</dd>
+            </dl>
+            <h4>"Public" Methods</h4>
+            <p>These are the methods that can be used in creating a decoder. Following these methods are methods that must be defined in the process of creating a decoder. </p>
+            <p>Each of these methods takes a file handle, and runs through it, calling a defined string reading function on each segment of the data file, which is what produces the actual data returned.</p>
+            <dl>
+                <dt><pre class="python"><code>decode( filepath, generator=False, limit=1000 , **kwargs)</code></pre></dt>
+                <dd>
+                    <p>The method the client/user uses to decode a file. This is a wrapper around <code>decode_proc</code>, which controls whether the output is a generator or not (and it standardizes keyword arguments).</p>
+                    <dl>
+                        <dt>filepath</dt>
+                        <dd>A string or open file handler to be decoded (if already open, the file should be readable with the pointer located where you should start decoding)</dd>
+                        <dt>generator</dt>
+                        <dd>The boolean key instructing the code to use iterative yields, or to accumulate the returned data internally, and return once. Currently this defaults to <code>False</code></dd>
+                        <dt>limit</dt>
+                        <dd>Equivalent to <code>yieldcount</code> elsewhere. How many data observations to accumulate before yielding.</dd>
+                        <dt>**kwargs</dt>
+                        <dd>Have the same meaning as elsewhere in Python. Passing additional keyword arguments will be passed directly to the <code>decoder_proc</code> method.</dd>
+                    </dl>
+                </dd>
+                
+                <dt><pre class="python"><code>read_lines( yieldcount, filehandle )</code></pre></dt>
+                <dd>Read a file, line by line, and call the <code>self.on_line()</code> method for every line it encounters. The function accumulates the data returned from <code>self.on_line()</code>, and at the end returns a list of the produced data. For every <code>yieldcount</code> number of observations returned (lines read with <code>self.on_line()</code> that do not return <code>False</code>) the entire list of datapoints is <code>yield</code>ed, and the list resets.</dd>
+                
+                <dt><pre class="python"><code>read_chunks( yieldount, filehandle [begin, [end] ]  )</code></pre></dt>
+                <dd>
+                    <p>Read a file as chunks, identified by either a <code>begin</code> character, such as a <code>BOM</code> or an <code>end</code> character/string. You can also specify both. The <code>self.on_chunk()</code> method is called on each chunk read, and the data returned from <code>self.on_chunk()</code> is appended to a list, which is returned at the end.</p><p>
+                    Either <code>begin</code> or <code>end</code> must be specified.
+                </p>
+                    Same as <code>read_lines_gen</code>, this requires the same arguments as <code>read_chunks</code>, plus a <code>yieldcount</code> which determines how many successfully decoded obs to store before <code>yield</code>ing the data to an iterator.</dd>
+            </dl>
+            <h4>"Open" Methods</h4>
+            <p>
+                To write a decoder, there are three methods of which two must be defined for the decoder. These methods have been mentioned previously, and should be written to accept a certain input and provide a certain output. This structure allows a developer to completely skip any constructs of the library which do not fit the requirements of their decoding process. 
+            </p>
+            <div class="alert alert-warning"><b>Warning</b> You must specify the same function arguments as the null versions specified here, as these methods are all called indirectly. This is particularly important on the <code>decode_proc</code> method. Don't forget the <code>**kwargs</code></div>
+            <dl>
+                <dt><pre class="python"><code>on_line(self, string )</code></pre></dt>
+                <dd>
+                    Accepts a string and produces a list of data values from that string. The list of values should be of the same format as the <code>decoder.get_dtype()</code> output. So if a decoder produces four columns of data, with two single values and two arrays, the output should look like:
+                    <pre class="python"><code>[14,23,[1,3,4,8,4,3,3],[44,3,3,22,11,22,3,4215]]</code></pre>
+                    <p><b>If you read a file using the <code>read_lines()</code> method, then you MUST define the <code>on_line</code> method, as that is what converts the string into data</b></p>
+                </dd>
+                <dt><pre><code>on_chunk(self, string )</code></pre></dt>
+                <dd>
+                    Following above, this is a function you define which accepts a string which is the chunk of data between the delimiters provided, and produces a set of data from that chunk of string. The relationship between the output and the result of <code>deoder.get_dtype()</code> is the same as <code>on_line()</code> above.
+                    <p><b>If you read a file using the <code>read_chunks()</code> method, then you MUST define the <code>on_chunk</code> method, as that is what converts the string into data</b></p>
+                </dd>
+                <dt><pre><code>decode_proc(self, filepath, limit, **kwargs )</code></pre></dt>
+                <dd>
+                    <p>
+                        This is the only mandatory function for you to define, and it is the function called when a user or client calls the <code>.decode()</code> method. This function must accept a file path as its first parameter, and developers are cautioned to limit other inputs required, as they are non-standard.
+                    </p>
+                    <p><b>This is a generator, always</b></p>
+                    <p>
+                        The decoder should open the file, using either the contained <code>open_ascii</code> method or something else, and then it should call either the <code>self.read_lines</code> or <code>self.read_chunks</code> with the apropriate arguments. Noting that these methods are generators, and <code>decode_proc</code> is a generator, the basic coding for this should be
+                    </p>
+                    <pre><code>def decode_proc(self, filepath, limit, **kwargs):
+    filehandle = self.open_ascii(filepath)
+    if filehandle is False: return False
+    for data in self.read_chunks(limit, filehandle, begin=chr(2)):
+        yield data</code></pre>
+                    <p>
+                        The reason the <code>decode_proc</code> method is as complex as this is because there are a number of different procedures that might have to be done when a file is opened.
+                    </p>
+                    <p>
+                        If a decoder will only return one set of data for an entire file decoding procedure, then simply <pre><code>yield [data]</code></pre> at the end of your process, as opposed to <code>return</code>ing anything.
+                    </p>
+                </dd>
+            </dl>
+            <p>
+                The <code>FileDecoder</code> is demonstrated in the examples of creating a decoder at the end of this documentation.
+            </p>
+            
+            <h2>MessageDecoder Class</h2>
+            <p>
+                An implementation of the <code>Decoder</code> class which is used simply for decoding strings of data, commonly used as individual messages. The primary purpose of the <code>MessageDecoder</code> class is to encapsulate the process of decoding an ecoded message, so it may be used by several decoders. The class offers the ability (requires it, actually) to share decoders as well as variables. 
+            </p>
+      <dl>
+          <dt><pre><code>decode(self, string )</code></pre></dt>
+          <dd>
+              <p>A developer-defined method which receives a string, and returns a list of values, using whatever means necessary.</p>
+              <p>
+              <span class="label label-info">Note</span> This <code>.decode()</code> method is <strong>not</strong> a generator.</p>
+              
+          
+          </dd>
+      </dl>
+      <p>
+          An example of this class is when you have an instrument that produces several iterations of a similar message format, where the core of the message is decoded the same. While you have to write 3 or 4 different decoders for the actual files, the bulk of the work can be encapsulated as a <code>MessageDecoder</code>. Likewise, each file produces the same variables and structure, so the <code>MessageDecoder</code> can have the variables defined, and they can simply be inherited by the <code>FileDecoder</code>. 
+      </p>
+      <p>
+          Message decoders cannot be run in the same way as <code>FileDecoder</code> objects, because they do not return generators. The <code>decode</code> method only accepts the string for decoding. They can absolutely be used externally in the application though.
+      </p>
+            
+                <h2>Variable Lists and Fixed Variable Lists</h2>
+               <p>
+                    In the observation-based return schema
                    described above, metadata would not necessarily be included as 
                    discrete sets of data. The current best-practice for handling metadata --
                    and a method built into Pyodec -- is to add variable names, and descriptions
@@ -401,16 +636,364 @@ for data in dec.decode(src):
                        </tr>
                    </tbody>
                </table>
-               <p><i>
-                   As noted, these variable/metadata requirements are not set in
-                   stone, and will likely change through development with
-                   other users. Obviously backwards compatibility will become
-                   an issue pretty quickly, however.
-               </i></p>
-               <h1>Core objects and methods</h1>
-               
-               
+               <h3>VariableList Class</h3>
+               <p>
+                    A container for the metadata about data columns returned by a decoder
+                    which are considered the data returned. 
+               </p>
+                <p>
+                        <code>VariableList</code> objects can be added with the <code>+</code> operator. This will result in the two sets of variables being stacked. Calling <code>len()</code> on a <code>VariableList</code> object will return the number of variables contained within.
+                </p>
+               <h4>Attributes</h4>
+               <p>
+                    Though accessible, these lists are managed by the methods for both reading
+                    and writing. It is not required to be familiar with the internal 
+                    organization of the contained data.
+               </p>
+               <dl>
+                    <dt>varnames</dt>
+                    <dd>List of contained variable names (e.g. column names)</dd>
+                    <dt>longnames</dt>
+                    <dd>List of string long names for the variables contained</dt>
+                    <dt>dtypes</dt>
+                    <dd>List of strings or dtype objects corresponding to the data type
+                    of the returned column</dd>
+                    <dt>shapes</dt>
+                    <dd>List of sizes of the returned dataset, either in tuple form, or a single integer .</dd>
+                    <dt>offsets</dt>
+                    <dd>List of data compression offset, rarely used</dd>
+                    <dt>scales</dt>
+                    <dd>list of data compression scaling values</dd>
+                    <dt>units</dt>
+                    <dd>List of strings representing the physical unit of the variable.</dd>
+                    <dt>mins</dt>
+                    <dd>List of QC minimum reasonable value for a variable</dd>
+                    <dt>maxs</dt>
+                    <dd>List of QC maximum reasonable values for a variable</dd>
+               </dl>
+               <h4>Methods</h4>
+               <dl>
+                    <dt><pre ><code class="python">addvar(name, longname, dtype, shape, unit, [index=None, [scale=1, [offset=0, [mn=0, [mx=1] ] ] ] ])</pre></code></dt>
+                    <dd>
+                        <p>Append a variable to the list of variables.</p>
+                        <dl>
+                            <dt>name</dt>
+                            <dd>Variable Name (e.g. column name)</dd>
+                            <dt>longname</dt>
+                            <dd>More complete/clear string name of the variable.</dd>
+                            <dt>dtype</dt>
+                            <dd>The datatype the values should be stored as, a minimum (e.g. <code>float32</code>)</dd>
+                            <dt>shape</dt>
+                            <dd>Shape of the referenced dataset, either an integer or a tuple in the same manner as a numpyarray.shape</dd>
+                            <dt>unit</dt>
+                            <dd>The scientific unit of the returned variable</dd>
+                            <dt>index</dt>
+                            <dd>Optional - the index position of the variable. If missing, then the position will simply be following the previous (appended to the list)</dd>
+                            <dt>scale</dt>
+                            <dd>Data value scale (used for compression)</dd>
+                            <dt>offset</dt>
+                            <dd>Data value offset (also used for compression)</dd>
+                            <dt>mn</dt>
+                            <dd>Minimum acceptable value for this variable (a QC value)</dd>
+                            <dt>mx</dt>
+                            <dd>Maximum acceptable value for this variable (QC)</dd>
+                        </dl>
+                    </dd>
+                    <dt><pre><code>getvar( varname )</code></pre></dt>
+                    <dd>
+                        Grab the dictionary of stored values corresponding to a variable.
+                    </dd>
+                    <dt><pre><code>getvar_by_id(id)</code></pre></dt>
+                    <dd>
+                        Get the dictionary stored values corresponding to the variable
+                        at index <code>id</code>. The unnamed attribute <code>id</code>
+                        corresponds to the position in the internal list of variables.
+                    </dd>
+                    <dt><pre><code>getvars()</code></pre></dt>
+                    <dd>
+                        Return the dictionary of stored values for every stored value in a list 
+                        of dictionaries.
+                    </dd>
+                    <dt><pre><code>tables_desc()</code></pre></dt>
+                    <dd>
+                        Return a numpy recarray-compliant dtype statement. The current
+                        name reflects that this was desgined for integration of the output
+                        datatypes into Pytables.
+                    </dd>
+               <h3>FixedVariableList Class</h3>
+               <p>
+                    A class similar to <code>VariableList</code>, except instead of shape
+                    the actual value of the fixed variable is held within, and thus
+                    passed to the decoder client. The <code>index</code> is not used here, as the values in a <code>FixedVariableList</code> only direcly relate to themselves.
+               </p>
+               <h4>Methods</h4>
+               <dl>
+                    <dt><pre ><code class="python">addvar(name, unit, dtype, data)</pre></code></dt>
+                    <dd>
+                        <p>Append a variable to the list of variables.</p>
+                        <dl>
+                            <dt>name</dt>
+                            <dd>Variable Name (e.g. column name)</dd>
+                            
+                            <dt>unit</dt>
+                            <dd>The stored unit of the set of values</dd>
+                            <dt>dtype</dt>
+                            <dd>The datatype the values should be stored as, a minimum (e.g. <code>float32</code>)</dd>
+                            <dt>data</dt>
+                            <dd>The value of the fixed variable. For a height index, it would be
+                            the array of heights at which the non-fixed variables report.</dd>
+                        </dl>
+                    </dd>
+                    <dt><pre><code>getvars()</code></pre></dt>
+                    <dd>
+                        Return the dictionary of stored values for every stored value in a list 
+                        of dictionaries.
+                    </dd>
+                </dl>
+                    
+                    
+                    
+                
                <h1>Writing a decoder</h1> 
+                   <p>
+                       The best we can do here is to give some nice examples of writing a decoder. Remember that pyodec is not really for decoding files that can just as easily be decoded with <code>np.genfromtext</code> or many of its other quick, easy methods for reading structured data. This is for the ugly files, files that are delightfully readable by humans but a true pain for computers.
+                   </p>
+                   <h4>A complete decoder example</h4>
+                   <pre><code>
+from pyodec.core import FileDecoder, VariableList, FixedVariableList
+import numpy as np
+import os
+import time
+import gzip
+from datetime import datetime as dt
+from calendar import timegm
+
+class ASCSdrD(FileDecoder):
+    i=0
+    select_keys=[]
+    def on_line(self, line):
+        self.i+=1
+        l = line.split(',')
+        if self.i == 1:
+            # header line, learn great things!
+            # we are going to learn exactly what place in each row, the variables are
+            # this is assuming only 250 values per variable - this is in the order of the HDF
+            l = np.array(l[2:], dtype='|S10')
+            rng = np.arange(l.shape[0])
+            self.select_keys = [
+                rng[l=='sitename'],
+                rng[(l == 'ws10') | (l == 'ws250')],
+                rng[(l == 'wd10') | (l == 'wd250')],
+                rng[(l == 'w10') | (l == 'w250')],
+                rng[(l == 'iu10') | (l == 'iu250')],
+                rng[(l == 'iv10') | (l == 'iv250')],
+                rng[(l == 'iw10') | (l == 'iw250')],
+                rng[(l == 'snru10') | (l == 'snru250')],
+                rng[(l == 'snrv10') | (l == 'snrv250')],
+                rng[(l == 'snrw10') | (l == 'snrw250')],
+                rng[(l == 'sds10') | (l == 'sds250')],
+                rng[(l == 'sdw10') | (l == 'sdw250')],
+                rng[(l == 'gspd10') | (l == 'gspd250')],
+                rng[l == 'tempc'],
+                rng[l == 'batv'],
+                rng[l == 'antstatus'],  # str
+                rng[l == 'heater'],  # str
+                rng[l == 'genon'],  # str
+                rng[l == 'fuel'],  # str
+                rng[l == 'rain'],
+                rng[l == 'snow'],
+                rng[l == 'rh'],
+                rng[l == 'pressure'],
+                [-1],  # I am assuming dewpoint will remain last ('dewpt')
+            ]
+            return False
+        try:
+            # get the date
+            d = l[0] + l[1]
+            t = time.mktime(time.strptime(d, '%m/%d/%Y%H:%M:%S'))
+        except ValueError:
+            return None
+        # again. we are going to assume the dataset is not changing!
+        data = l[2:]
+        row = [t]
+        for k in self.select_keys:
+            if len(k) == 2:
+                row.append(np.array(data[k[0]:k[1] + 1],dtype=np.float32)) 
+            else:
+                row.append(data[k[0]])
+        # and produce this delightful set of datas!
+        return row
+    
+    
+    def decode_proc(self, filepath, limit=1000):
+        # open the file
+        if not os.path.exists(filepath):
+            print "NO SUCH FILE"
+            return 
+        gzfh = gzip.open(filepath,'r')
+        for d in self.read_lines_gen(limit, gzfh):
+            #every 1000 obs, this should return somethin
+            yield d
+            
+        gzfh.close()
+
+
+# define the dtypes of the variables we produce here (in the correct order!)
+V = VariableList()
+V.addvar('DATTIM','seconds since 1970-01-01 00:00 UTC',int,1,'S')
+V.addvar('STNAME','Station Name',str,20,'')
+V.addvar('WSPD','Wind speed','float32',(25,),'m/s')
+V.addvar('WDIR','Wind gust','float32',(25,),'deg')
+V.addvar('WVERT','','float32',(25,),'m/s')
+V.addvar('UINT','','float32',(25,),'mv')
+V.addvar('VINT','','float32',(25,),'mv')
+V.addvar('WINT','','float32',(25,),'mv')
+V.addvar('SNRU','','float32',(25,),'')
+V.addvar('SNRV','','float32',(25,),'')
+V.addvar('SNRW','','float32',(25,),'')
+V.addvar('SDS','','float32',(25,),'')
+V.addvar('SDW','','float32',(25,),'')
+V.addvar('GUST','','float32',(25,),'m/s')
+V.addvar('TMPC','','float32',1,'C')
+V.addvar('BATV','','float32',1,'V')
+V.addvar('ANTSTAT','',str,5,'')
+V.addvar('HEAT','',str,5,'')
+V.addvar('GEN','',str,5,'')
+V.addvar('FUEL','',str,5,'')
+V.addvar('RAIN','','float32',1,'')
+V.addvar('SNOW','','float32',1,'')
+V.addvar('RH','','float32',1,'%')
+V.addvar('PRES','','float32',1,'hPa')
+V.addvar('DEWP','','float32',1,'C')
+
+# define any fixed variables which would be beneficial to our cause
+FV = FixedVariableList()
+FV.addvar('HEIGHT','m AGL','int',np.arange(25)*10+10)
+
+decoder = ASCSdrD(vars=V, fixed_vars=FV)</code></pre>
+                   <h4>Decode using a separate message decoder</h4>
+                   <p>
+                       This separate decoder handles both the decoding of the message strings (chunks in this case) and the variable definitions. The message decoder code is below.
+                   </p>
+                   <pre><code>
+from pyodec.core import FileDecoder
+from pyodec.messages.vaisalacl31 import decoder as msgdecode
+import numpy as np
+import os
+import time
+import gzip
+
+"""
+U of Utah CL-31 message type: epoch times stored *before* the message
+"""
+
+class uucl31D(FileDecoder):
+    def on_chunk(self, message):
+        # receive a chunk, so grab the time from the chunk, and then use the imported decoder to decode the rest of the message.
+        ob = message.split(unichr(001))
+        try:
+            tmstr = ob[0].strip().split()[-1]
+            otime = float(tmstr)
+        except:
+            # there was a formatting problem of sime kind, so return nothing to skip the row.
+            return False
+        try:
+            data = msgdecode.decode(ob[1])
+        except:
+            # there was something ugly in this data... serial hiccups.
+            data=False
+        if data is False:
+            return None
+        output = (otime,data[0],data[1])
+        return output
+    
+    def decode_proc(self, filepath, limit=1000):
+        # open the file
+        if not os.path.exists(filepath):
+            print "NO SUCH FILE"
+            return 
+        filehandle = gzip.open(filepath,'r')
+        for d in self.read_chunks(limit, filehandle, end=unichr(004)):
+            yield d
+        gzfh.close()
+
+decoder = uucl31D(inherit=msgdecode)
+# initialize a decoder variable (which can be imported) and inherit the variable from the imported msgdecode class (which is yet another instantiated MessageDecoder object).
+
+                   </code></pre>
+                   <h4>And the associated message decoder</h4>
+                   <pre><code>from pyodec.core import MessageDecoder, VariableList, FixedVariableList
+import numpy as np
+
+
+class cl31Dm2(MessageDecoder):
+    def decode(self, message):
+        OB_LENGTH = 770  # FIXME - the current return length is limited to 770
+        SCALING_FACTOR = 1.0e9
+        
+        'break the full ob text into it\'s constituent parts'
+        p1 = message.split(unichr(002))
+        p2 = p1[1].split(unichr(003))
+        code = p1[0].strip()
+        ob = p2[0].strip()  # just contents between B and C
+        # unused currently checksum = p2[1].strip()
+    
+        data = ob.split("\n")  # split into lines
+    
+        'the last line of the profile should be the data line'
+        prof = data[-1].strip()
+        'grab status lines'
+        sl1 = data[0].strip()
+        sl2 = data[-2].strip()  # I will skip any intermediate data lines...
+    
+        status = np.array([sl1[0].replace('/', '0'),
+                        sl1[1].replace('A', '2').replace('W', '1')] +
+                        sl1[2:-13].replace('/', '0').split() + sl2[:-14].split(),
+                        dtype=np.float32)
+        'status should have a length of 13... we shall see...'
+        # determine height difference by reading the last digit of the code
+        height_codes = [0, 10, 20, 5, 5]  # '0' is not a valid key, and will not happen
+        data_lengths = [0, 770, 385, 1500, 770]
+        'length between 770 and 1500'
+        datLen = data_lengths[int(code[-1])]
+        htMult = height_codes[int(code[-1])]
+        values = np.zeros(datLen, dtype=np.float32)
+        ky = 0
+        for i in xrange(0, len(prof), 5):
+    
+            ven = prof[i:i + 5]
+    
+            values[ky] = twos_comp(int(ven, 16), 20)  # scaled to 100000sr/km (x1e9 sr/m)FYI
+            ky += 1  # keep the key up to date
+    
+        # then the storage will be log10'd values
+        values[values <= 0] = 1.
+        out = (np.log10(values[:OB_LENGTH] / SCALING_FACTOR),status)
+        return out
+
+# I thanks Travc at stack overflow for this method of converting values
+# See here: http://stackoverflow.com/questions/1604464/twos-complement-in-python
+def twos_comp(val, bits):
+    """compute the 2's compliment of int value val"""
+    if((val & (1 << (bits - 1))) != 0):
+        val = val - (1 << bits)
+    return val
+
+
+# set decoder parameters for this type of message.
+
+vvars = VariableList()
+vvars.addvar('DATTIM','Seconds since 1970-01-01 00:00:00 UTC',int,1,'S')
+vvars.addvar('BS','Attenuated bacscatter coefficient','float32',(770,),'1/(m sr)')
+vvars.addvar('STATUS','CL-31 Status values','float32',(13,),'Null')
+
+# for now we are going to assume height is fixed, and return it as such
+fvars = FixedVariableList()
+fvars.addvar('HEIGHT','m AGL','int',np.arange(770)*10)
+
+decoder = cl31Dm2(vars=vvars,fixed_vars=fvars)
+
+</code></pre>
             </div> <!-- documentation div -->
             
         </div>
