@@ -114,11 +114,11 @@
                 <p>
                     Pyodec is structured where decoders are stored in a 
                     module called <code>files</code>. To access a decoder, say
-                    <code>vaisalaCl31msg2</code>, you could directly access it with
+                    <code>vaisala_cl31_uu</code>, you could directly access it with
                     
                     
                 </p>
-                <pre><code>import pyodec.files.vaisalaCl31msg2 as decoder
+                <pre><code>import pyodec.files.vaisala_cl31_uu as decoder
 >>> data = decoder.decode(src)</code></pre>
                 <p>
                     so the <code>decode</code> method is an available method within
@@ -142,10 +142,9 @@
                     Here is an example of using it to decode <code>src</code> as above.
                 </p>
                 <pre><code>import pyodec
->>> pyodec.decode(src, decoder='vaisalaCl31msg2')</code></pre>
+>>> pyodec.decode(src, decoder='vaisala_cl31_uu')</code></pre>
                 <p>
-                    This slightly simplifies the importing process, but to customize
-                    how your code uses a decoder, it is necessary to
+                    This elimintates the importing process, but it also makes some things harder, like getting metadata from the decoder. To do that, we recommend you directly import the decoder as above.
                 </p>
                 <h3>Running a decoder</h3>
                 <p>
