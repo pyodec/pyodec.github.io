@@ -1,0 +1,19 @@
+{   
+    "files": [
+        [ "asc_sodar",
+        "Compressed sodar profile, single line 0-250m, comma separated.", 
+         "ASCSdrD"],
+        ["sodar2",
+        "(Moved from <code>stisodar</code>) Sodar wind profile log file from an ASC-mini-sodar. 10 observations, tab-spaced.", 
+         "SodarGrid1"],
+        ["vaisala_cl31_ep",
+         "Moved from <code>vaisala_cl31_uu</code>. Vaisala CL-31 Ceilometer log message #2 with epoch times <em>before</em> the observation",
+         "Epcl31D"],
+        ["vaisala_cl31_ceilview",
+        "Vaisala Cl-31 message 2 log files produced by the CeilView software",
+        "CVcl31"]
+        
+    ],
+    "messages": [
+    ]
+}
