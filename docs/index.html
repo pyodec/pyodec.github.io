@@ -281,19 +281,17 @@ for data in pyodec.files.decoderName.decode(src, limit=1000):
                    inputs, however there are a few goals that can be shared.
                </p>
                <h4>Discrete observations are collected in a list</h4>
-               <p>Not the other way around. <b>This is less efficient with memory</b>, but
+               <p>Not the other way around. <em>This is slightly less efficient with memory</em>, but
                    it is conceptually much simpler, and allows the second rule to
                    actually work. </p>
                <div class="text-center">
                    <pre><code>yield [(12,[4,4,4]), (12,[5,5,5]), ... ]</code></pre>
-                   not
+                   <b>not</b>
                    <pre><code>yield [[[12,12,...],[[4,4,4],[5,5,5],...]]</code></pre>
                    
                </div>
                <div class="alert alert-info" role="alert">
-                   <div class="fa fa-info-circle"></div> <b>Note:</b> acutual observations should be lists or numpy recarrays, 
-                   not dictionaries. Variables, column names, or their equivalents
-                   are handled in the metadata portion of the protocol.
+                   <div class="fa fa-info-circle"></div> <b>Note:</b> This allows the returned data to be considered "records" as far as numpy is concerned, and can be easily converted into a very powerful recarray type simply with <pre><code>data = np.rec.fromrecords(data, dtype=decoder.get_dtype())</code></pre>
                </div>
                
                <h4>Iterative and sequential output are the same structure</h4>
@@ -339,7 +337,8 @@ for data in pyodec.files.decoderName.decode(src, limit=1000):
                                <pre><code>import pyodec.files.myDecoder as dec
 import numpy as np
 for data in dec.decode(src):
-    data0_in_numpy = np.array(data[0], dtype = dec.get_dtype())</code></pre>
+    # convert data into a super awesome numpy recarray
+    data = np.rec.fromrecords(data, dtype=decoder.get_dtype())</code></pre>
                            </td>
                        </tr>
                    </tbody>
@@ -433,7 +432,7 @@ for data in dec.decode(src):
             <p>
                 This is the primary descendant of the <code>Decoder</code> class, and is for the development of decoders which read in individual string or gzipped files. <strong>An individual decoder, if designed to handle files, should inherit the <code>FileDecoder</code> class.</strong>
             </p>
-             <div class="alert alert-danger"><b>Warning</b> due to a current compatibility issue, the file reading methods in the <code>FileDecoder</code> class will not read lines beginning with <code>::</code> (two colons).</div>
+             <div class="alert alert-warning"><b>Warning:</b> due to a current compatibility issue, the file reading methods in the <code>FileDecoder</code> class will not read lines beginning with <code>::</code> (two colons).</div>
             <p>
                 The initialization method is the same as for the <code>Decoder</code> class.
             </p>

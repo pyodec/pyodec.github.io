@@ -10,10 +10,22 @@
          "Moved from <code>vaisala_cl31_uu</code>. Vaisala CL-31 Ceilometer log message #2 with epoch times <em>before</em> the observation",
          "Epcl31D"],
         ["vaisala_cl31_ceilview",
-        "Vaisala Cl-31 message 2 log files produced by the CeilView software",
-        "CVcl31"]
+        "Vaisala CL-31 message 2 log files produced by the CeilView software",
+        "CVcl31"],
+        ["campsci_cs135_ep",
+        "Campbell Scientific CS135 Laser ceilometer (message 006 only)",
+        "Epcs135D"],
+        ["madis_map",
+         "Decodes MADIS Multi Agency Profiler NetCDFs. Utilizes the <code>decoder.state</code> to indicate output changes",
+         "MapDecoder"],
+        ["madis_npn",
+         "MADIS-provided NOAA Profiler Network NetCDFs. Utilizes the <code>decoder.state</code> to indicate output changes","NpnDecoder"]
+        
         
     ],
     "messages": [
+        ["vaisalacl31his","Vaisala CL-31 .his log file messages produced from CL-view","cl31HisD"],
+        ["vaisalacl51UAH","A unique processed format from the UAH CL-51 ceilometer","VCl51UAHD"],
+        ["campscics135","Campbell Scientific CS135 Laser ceilometer message 006","cs135Dm6"]
     ]
 }

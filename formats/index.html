@@ -60,9 +60,23 @@
                         <tr><th>Decoder Module</th>
                             <th>Decoder Class</th>
                             <th>Description</th>
+                            <th>GitHub</th>
                             <th>Demo</th></tr>
                     </thead>
                     <tbody id="decoderlist_files">
+                        
+                    </tbody>
+                </table>
+                <h2>Message Decoders</h2>
+                <table class="table table-striped">
+                    <thead>
+                        <tr><th>Decoder Module</th>
+                            <th>Decoder Class</th>
+                            <th>Description</th>
+                            <th>GitHub</th>
+                            <th>Demo</th></tr>
+                    </thead>
+                    <tbody id="decoderlist_messages">
                         
                     </tbody>
                 </table>
@@ -81,7 +95,8 @@
     </footer>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>-->
+    <script src="/js/jquery.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="/bs/js/bootstrap.min.js"></script>
     <!--<script src="/js/scroll.js"></script> -->
@@ -107,13 +122,27 @@
                              .html('<code>'+fl[2]+"</code>"))
                 row.append($('<td />')
                              .html(desc))
-                row.append('<td><a href="./files/'+dec+'.txt">Demo</a></td>')
+                row.append('<td><a href="https://github.com/pyodec/pyodec/tree/master/pyodec/files/'+dec+'.py">Source</a></td>')
+                row.append('<td><a href="./files/'+dec+'.txt">Not Yet</a></td>')
                 $('#decoderlist_files').append(row)
-                console.log(row)
+                
             }
             for (f in data.messages) {
                 ms = data.messages[f];
-                console.log(ms);
+                dec = ms[0];
+                desc = ms[1];
+                cls = ms[2]
+                var row = $('<tr />')
+                row.append($('<td />')
+                    .html(dec));
+                row.append($('<td />')
+                             .html('<code>'+cls+"</code>"))
+                row.append($('<td />')
+                             .html(desc))
+                row.append('<td><a href="https://github.com/pyodec/pyodec/tree/master/pyodec/messages/'+dec+'.py">Source</a></td>')
+                row.append('<td><a href="./files/'+dec+'.txt">Not yet</a></td>')
+                $('#decoderlist_messages').append(row)
+                
             }
         });
     </script>
