@@ -24,6 +24,7 @@
         
     ],
     "messages": [
+        ["vaisalacl31","Standard CL-31 message 2","cl31Dm2"],
         ["vaisalacl31his","Vaisala CL-31 .his log file messages produced from CL-view","cl31HisD"],
         ["vaisalacl51UAH","A unique processed format from the UAH CL-51 ceilometer","VCl51UAHD"],
         ["campscics135","Campbell Scientific CS135 Laser ceilometer message 006","cs135Dm6"]
