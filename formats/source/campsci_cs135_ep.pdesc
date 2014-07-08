@@ -2,3 +2,4 @@ file
 campsci_cs135_ep
 ::Epcs135D
 CS135 message 006 log files where times are stored as epoch timestamps BEFORE the observation BOT character.
+meteorology,ceilometer,lidar,backscatter

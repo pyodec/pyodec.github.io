@@ -2,3 +2,4 @@ file
 vaisala_cl51_uah
 ::UAHcl51D
 Vaisala CL51 backscatter profiles in the UAH-type computed format
+meteorology,ceilometer,backscatter,UAH,CL51

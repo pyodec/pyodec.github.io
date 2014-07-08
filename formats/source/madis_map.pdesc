@@ -2,3 +2,4 @@ files
 madis_map
 ::MapDecoder
 Decode madis Multi-Agency profiler data - uses <code>Decoder.state</code> to indicate data coming from different stations
+meteorology,MADIS,NetCDF,profilers,radar,wind,sodar

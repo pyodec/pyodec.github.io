@@ -125,11 +125,11 @@
                   <h1 class="featurette-heading" style='color:#090'>2. Decode your file</h1>
                   
                   <p class="lead">If a decoder exists, all you have to do is </p>
-                  <pre class="text-left lead"><code>>>> import pyodec
->>> pyodec.decode(filesrc, decoder="myfiledecoder")</code></pre>
+                  <pre class="text-left lead"><code>&gt;&gt;&gt; import pyodec
+&gt;&gt;&gt; pyodec.decode(filesrc, decoder="myfiledecoder")</code></pre>
                     <p class="lead">or</p>
-                    <pre class="text-left lead"><code>>>> import pyodec.deocders.myfiledecoder as thedecoder
->>> thedecoder.decode(filesrc)</code></pre>
+                    <pre class="text-left lead"><code>&gt;&gt;&gt; from pyodec.files.myfiledecoder import decoder as thedecoder
+&gt;&gt;&gt; thedecoder.decode(filesrc)</code></pre>
                     <p class='lead'>Or one of the several other ways you can call a decoder method on a file or string</p>
                 <a href="docs/#DecodingwithPyodec" class="btn btn-lg btn-default" role='button'>The techniques of decoding</a>
               </div>

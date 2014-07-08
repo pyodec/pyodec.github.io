@@ -2,3 +2,4 @@ message
 vaisalact12k
 ::ct12D
 Vaisala CT-12K log message.
+meteorology,ct12k,ceilometer,Vaisala
