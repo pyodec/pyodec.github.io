@@ -2,3 +2,4 @@ file
 radiometrics_mwr1
 ::RadMWR1D
 Radiometrics Mirowacve radiometer Level 2 log files - a couple similar formats
+meteorology,MWR,radiometer,Radiometrics,profiler,temperature,moisture

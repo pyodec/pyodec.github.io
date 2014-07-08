@@ -2,7 +2,9 @@ message
 vaisalacl31
 ::cl31Dm2
 Standard CL-31 message 2
+meteorology,ceilometer,lidar,backscatter,Vaisala
 ::cl31HisD
 Vaisala CL-31 .his log file messages produced from CL-view
+meteorology,ceilometer,lidar,BL-View,Vaisala
 
 

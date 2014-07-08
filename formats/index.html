@@ -52,7 +52,7 @@
             <div class="page-header">
                 <h1>Decodable File Formats</h1>
                 <p class="lead">
-                    The following are the data file types which Pyodec distrubutes. Additional decoders may leverage the pyodec library without being included in the package.
+                    The following are the data file types which Pyodec distrubutes. Additional decoders may leverage the pyodec core toolkit without being included in the package.
                 </p>
                 <h2>File Decoders</h2>
                 <p>Accessed from the <code>pyodec.files</code> namespace.</p>
@@ -61,6 +61,7 @@
                         <tr><th>Decoder Module</th>
                             <th>Decoder Class</th>
                             <th>Description</th>
+                            <th>Tags</th>
                             <th>GitHub</th></tr>
                     </thead>
                     <tbody id="decoderlist_files">
@@ -74,6 +75,7 @@
                         <tr><th>Decoder Module</th>
                             <th>Decoder Class(es)</th>
                             <th>Description</th>
+                            <th>Tags</th>
                             <th>GitHub</th></tr>
                     </thead>
                     <tbody id="decoderlist_messages">
@@ -113,7 +115,8 @@
                 ms = data.files[f];
                 mod = ms[0];
                 classes = ms[1];
-                descs = ms[2]
+                descs = ms[2];
+                tags=ms[3];
                 var row = $('<tr />')
                 
                 row.append($('<td />').attr('rowspan',classes.length)
@@ -122,6 +125,12 @@
                              .html('<code>'+classes[0]+"</code>"))
                 row.append($('<td />')
                              .html(descs[0]+" (<em>default decoder</em>)"))
+                // tags
+                tstr = ""
+                for (t in tags[0]) {
+                    tstr+='<span class="label label-info">'+tags[0][t]+"</span> ";}
+                row.append($('<td />')
+                             .html(tstr))
                 row.append($('<td />')
                     .attr('rowspan', classes.length)
                     .html('<a href="https://github.com/pyodec/pyodec/tree/master/pyodec/files/'+mod+'.py"> Source</a>'))
@@ -132,9 +141,17 @@
                 while (i < classes.length) {
                     cls = classes[i];
                     desc = descs[i];
+                    tag=tags[i]
                     i+=1
                     var nrow = $('<tr />');
                     nrow.html('<td><code>'+cls+"</code></td><td>"+desc+"</td>")
+                    // tags
+                    tstr = ""
+                    for (t in tag) {
+                        tstr+='<span class="label label-info">'+tag[t]+"</span> ";
+                    }
+                    nrow.append($('<td />')
+                                .html(tstr))
                     $('#decoderlist_files').append(nrow)
                 }
                 
@@ -143,7 +160,8 @@
                 ms = data.messages[f];
                 mod = ms[0];
                 classes = ms[1];
-                descs = ms[2]
+                descs = ms[2];
+                tags = ms[3]
                 var row = $('<tr />')
                 
                 row.append($('<td />').attr('rowspan',classes.length)
@@ -152,6 +170,13 @@
                              .html('<code>'+classes[0]+"</code>"))
                 row.append($('<td />')
                              .html(descs[0]+" (<em>default decoder</em>)"))
+                // tags
+                tstr = ""
+                for (t in tags[0]) {
+                    tstr+='<span class="label label-info">'+tags[0][t]+"</span> ";}
+                row.append($('<td />')
+                             .html(tstr))
+                // git source
                 row.append($('<td />')
                     .attr('rowspan', classes.length)
                     .html('<a href="https://github.com/pyodec/pyodec/tree/master/pyodec/messages/'+mod+'.py"> Source</a>'))
@@ -159,12 +184,21 @@
                 $('#decoderlist_messages').append(row)
                 // and append additional rows for additional classes
                 i = 1
+                console.log(tags[i], mod)
                 while (i < classes.length) {
                     cls = classes[i];
                     desc = descs[i];
+                    tag = tags[i]
                     i+=1
                     var nrow = $('<tr />');
                     nrow.html('<td><code>'+cls+"</code></td><td>"+desc+"</td>")
+                    // tags
+                    tstr = ""
+                    for (t in tag) {
+                        tstr+='<span class="label label-info">'+tag[t]+"</span> ";
+                    }
+                    nrow.append($('<td />')
+                                .html(tstr))
                     $('#decoderlist_messages').append(nrow)
                 }
                 

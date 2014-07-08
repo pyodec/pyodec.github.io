@@ -2,3 +2,4 @@ file
 vaisala_cl31_ep
 ::Epcl31D
 Vaisala CL31 message 6 with epoch timestamps BEFORE the observations.
+meteorology,ceilometer,lidar,backscatter

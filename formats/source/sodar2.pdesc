@@ -2,4 +2,4 @@ file
 sodar2
 ::SodarGrid1
 Sodar wind profile log files in the tab-spaced grid format. 
-
+meteorology,sodar,wind,profiler

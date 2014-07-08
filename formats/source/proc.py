@@ -26,10 +26,11 @@ for fl in os.listdir('.'):
         else:
             k = 'messages'
         # start with the module name, the first element
-        row = [data[1].strip(),[],[]]
+        row = [data[1].strip(),[],[],[]] # name, classes, descriptions, tags
         cls = False
         desc = ""
         web = ""
+        tags = []
         cls_start=False
         for line in data[2:]:
             if "::" in line:
@@ -37,14 +38,19 @@ for fl in os.listdir('.'):
                     # append the previous class, and reset
                     row[1].append(cls)
                     row[2].append(desc)
+                    row[3].append(tags)
                     desc  = ""
+                    tags = []
                 cls = line[2:].strip()
-                cls_start=True
+                cls_start=1
                 
-            elif cls_start:
+            elif cls_start==1:
                 # this is the first line after a class
                 desc = line.strip()
+                cls_start=2
+            elif cls_start==2:
                 cls_start=False
+                tags = line.strip().split(',')
             else:
                 web += line
 
@@ -52,6 +58,7 @@ for fl in os.listdir('.'):
             # append the previous class, and reset
             row[1].append(cls)
             row[2].append(desc)
+            row[3].append(tags)
         
     formats[k].append(row)
 with open('./formats.json','w') as fil:
