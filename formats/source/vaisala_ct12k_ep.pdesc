@@ -1,0 +1,4 @@
+file
+vaisala_ct12k_ep
+::Epct12kD
+Decode CT12k files with epoch times stored BEFORE the observation.

@@ -61,8 +61,7 @@
                         <tr><th>Decoder Module</th>
                             <th>Decoder Class</th>
                             <th>Description</th>
-                            <th>GitHub</th>
-                            <th>Demo</th></tr>
+                            <th>GitHub</th></tr>
                     </thead>
                     <tbody id="decoderlist_files">
                         
@@ -70,13 +69,12 @@
                 </table>
                 <h2>Message Decoders</h2>
                 <p>Accessed from the <code>pyodec.messages</code> namespace.</p>
-                <table class="table table-striped">
+                <table class="table">
                     <thead>
                         <tr><th>Decoder Module</th>
-                            <th>Decoder Class</th>
+                            <th>Decoder Class(es)</th>
                             <th>Description</th>
-                            <th>GitHub</th>
-                            <th>Demo</th></tr>
+                            <th>GitHub</th></tr>
                     </thead>
                     <tbody id="decoderlist_messages">
                         
@@ -110,40 +108,65 @@
         /*
             read ./formats.json, and make a nice table
         */
-        
-        console.log('test');
-        $.get('formats.json', function(data) {
+        $.get('source/formats.json', function(data) {
             for (f in data.files) {
-                fl = data.files[f];
-                dec = fl[0];
-                desc = fl[1];
+                ms = data.files[f];
+                mod = ms[0];
+                classes = ms[1];
+                descs = ms[2]
                 var row = $('<tr />')
+                
+                row.append($('<td />').attr('rowspan',classes.length)
+                    .html('<pre>'+mod+'</pre>'));
                 row.append($('<td />')
-                    .html(dec));
+                             .html('<code>'+classes[0]+"</code>"))
                 row.append($('<td />')
-                             .html('<code>'+fl[2]+"</code>"))
+                             .html(descs[0]+" (<em>default decoder</em>)"))
                 row.append($('<td />')
-                             .html(desc))
-                row.append('<td><a href="https://github.com/pyodec/pyodec/tree/master/pyodec/files/'+dec+'.py">Source</a></td>')
-                row.append('<td><a href="./files/'+dec+'.txt">Not Yet</a></td>')
+                    .attr('rowspan', classes.length)
+                    .html('<a href="https://github.com/pyodec/pyodec/tree/master/pyodec/files/'+mod+'.py"> Source</a>'))
+                
                 $('#decoderlist_files').append(row)
+                // and append additional rows for additional classes
+                i = 1
+                while (i < classes.length) {
+                    cls = classes[i];
+                    desc = descs[i];
+                    i+=1
+                    var nrow = $('<tr />');
+                    nrow.html('<td><code>'+cls+"</code></td><td>"+desc+"</td>")
+                    $('#decoderlist_files').append(nrow)
+                }
                 
             }
             for (f in data.messages) {
                 ms = data.messages[f];
-                dec = ms[0];
-                desc = ms[1];
-                cls = ms[2]
+                mod = ms[0];
+                classes = ms[1];
+                descs = ms[2]
                 var row = $('<tr />')
+                
+                row.append($('<td />').attr('rowspan',classes.length)
+                    .html('<pre>'+mod+'</pre>'));
                 row.append($('<td />')
-                    .html(dec));
+                             .html('<code>'+classes[0]+"</code>"))
                 row.append($('<td />')
-                             .html('<code>'+cls+"</code>"))
+                             .html(descs[0]+" (<em>default decoder</em>)"))
                 row.append($('<td />')
-                             .html(desc))
-                row.append('<td><a href="https://github.com/pyodec/pyodec/tree/master/pyodec/messages/'+dec+'.py">Source</a></td>')
-                row.append('<td><a href="./files/'+dec+'.txt">Not yet</a></td>')
+                    .attr('rowspan', classes.length)
+                    .html('<a href="https://github.com/pyodec/pyodec/tree/master/pyodec/messages/'+mod+'.py"> Source</a>'))
+                
                 $('#decoderlist_messages').append(row)
+                // and append additional rows for additional classes
+                i = 1
+                while (i < classes.length) {
+                    cls = classes[i];
+                    desc = descs[i];
+                    i+=1
+                    var nrow = $('<tr />');
+                    nrow.html('<td><code>'+cls+"</code></td><td>"+desc+"</td>")
+                    $('#decoderlist_messages').append(nrow)
+                }
                 
             }
         });

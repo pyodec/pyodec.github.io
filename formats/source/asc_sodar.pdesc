@@ -1,0 +1,4 @@
+file
+asc_sodar
+::ASCSdrD
+decode a single-line, comma-separated sodar wind profile log file.

@@ -91,7 +91,7 @@
                 </p>
                 <div class="panel panel-info">
                     <div class="panel-heading">
-                        <h4 class="panel-title">Future dependencies</h4>
+                        <div class="panel-title">Future dependencies</div>
                     </div>
                     <div class="panel-body">
                         <p>Current dependencies may not reflect installation 
@@ -183,7 +183,7 @@ for data in pyodec.files.decoderName.decode(src, limit=1000):
                     When a data file is finished, and there are &lt; N sets int the 
                     dataset, they are yielded, so no data are missed.
                 </p>
-                <h4>Sequential decoding</h4>
+                <h4>Prodecural decoding</h4>
                 <p>
                     As a wrapper around the generator function, you can pass the 
                     argument <code>generator=False</code>, which will then execute
@@ -193,36 +193,24 @@ for data in pyodec.files.decoderName.decode(src, limit=1000):
                <pre><code>data = pyodec.decode(src, 'decoderName', generator=False)</code></pre>
                
                <p>
-                   And that is how you use pyodec, should you have an existing decoder
-                   available for your data file (and how you use it once you have built
-                   a decoder for your file)
+                   And that is how you use pyodec, should you have an existing decoder available for your data file (and how you use it once you have built a decoder for your file)
                </p>
                <h3>Building a decoder</h3>
                <p>
-                   Well, this isn't really a "getting started" scenario, unfortunately. 
-                   Read further down in the docs for the guide on developing a decoder.
+                   Well, this isn't really a "getting started" scenario, unfortunately. Read further down in the docs for the guide on developing a decoder. <a href="#Writingadecoder">Here!</a>
                </p>
                
                
                <h1>Protocols and rules</h1>
                <span class="label label-info">Under Development</span>
                <p class="lead">
-                   Though Pyodec is really a loosely connected set of independently
-                   written codes, it is important for the data model API to 
-                   be compatible between different decoders. The goal of these
-                   rules will be to allow a single piece of code to take a diverse
-                   set of files (knowing their decoders), and both decode them and
-                   look at the data with the same code.
+                   Though Pyodec is really a loosely connected set of independently written codes, it is important for the data model API to be compatible between different decoders. The goal of these rules will be to allow a single piece of code to take a diverse set of files (knowing their decoders), and both decode them and look at the data with the same code.
                </p>
                <p>
-                   Basic python rules for internal consistency, variable and method
-                   naming, etc. should be followed.
+                   Basic python rules for internal consistency, variable and method naming, etc. should be followed.
                </p>
                <p>
-                   This is python, so there are no private methods. Rewrite/reallocate
-                   any internal method as you please, but when doing so please try
-                   to follow these usage guidelines. If you find a better way to 
-                   do the central <code>decode</code> method, then share it!
+                   This is python, so there are no private methods. Rewrite/reallocate any internal method as you please, but when doing so please try to follow these usage guidelines. If you find a better way to do the central <code>decode</code> method, then share it!
                </p>
                <h2>Input &amp; client interfacing</h2>
                <p>
@@ -232,15 +220,10 @@ for data in pyodec.files.decoderName.decode(src, limit=1000):
                    
                </p>
                <p>
-                   At a minimum, a decoder class should contain a <code>decode</code>
-                   method which can be run conforming to these input and interface
-                    protocols.
+                   At a minimum, a decoder class should contain a <code>decode</code> method which can be run conforming to these input and interface protocols.
                </p>
                <p>
-                   Decoders should produce a generator object, (usually using <code>yield</code>),
-                   and should allow the keyword argument <code>generator</code> control
-                   whether a generator or list is returned. <code>generator</code> should
-                   default to <code>True</code>.
+                   Decoders should produce a generator object, (usually using <code>yield</code>), and should allow the keyword argument <code>generator</code> control whether a generator or list is returned. <code>generator</code> should default to <code>True</code>.
                </p>
                <br />
                <!-- extra keyword arguments -->
@@ -294,7 +277,7 @@ for data in pyodec.files.decoderName.decode(src, limit=1000):
                    <div class="fa fa-info-circle"></div> <b>Note:</b> This allows the returned data to be considered "records" as far as numpy is concerned, and can be easily converted into a very powerful recarray type simply with <pre><code>data = np.rec.fromrecords(data, dtype=decoder.get_dtype())</code></pre>
                </div>
                
-               <h4>Iterative and sequential output are the same structure</h4>
+               <h4>Iterative and procedural output are the same structure</h4>
                <p>
                    Simply, you interact with a returned list of values in the same
                    manner, whether you receive them from a <code>yield</code> or a
@@ -397,11 +380,38 @@ for data in dec.decode(src):
                 <p>
                     A file decoder should inherit the <code>Decoder</code> class. The main function of the decoder class is to facilitate variable (metadata) import, inheritance, and managment for a decoder instance.
                 </p>
+                <h4>Attributes</h4>
+                <p>The <code>Decoder</code> class object contains a set of attributes which can be set at init, or altered during use to share additional data from a decoding process.</p>
+                <dl>
+                    <dt>vars</dt>
+                    <dd>Where the <code>VariableList</code> object for this decoder's data set is held. This can be set at runtime, or defined when writing a decoder.</dd>
+                    <dt>fixed_vars</dt>
+                    <dd>Like <code>Decoder.vars</code>, this attribute holds the local <code>FixedVariableList</code> object for the dataset.</dd>
+                    <dt>inherit</dt>
+                    <dd>Holds the interited <code>Decoder</code> descendant which can be used to populate <code>vars</code> and <code>fixed_vars</code> on <code>__init__()</code>. This attribute exists primarily to hard-code the inheritance class.</dd>
+                    <dt>state</dt>
+                    <dd>
+                        <p>A persistent dictionary  which can be modified by the decoder in order to inform the processing code about the state of the decoder. This is most valuable for decoders which may determine data which may affect how the data is processed once it is produced. </p>
+                        <p>The default <code>state</code> value is</p>
+                        <pre><code>state = {'identifier':False,
+         'index':False}</code></pre>
+                        <p>An example would be a decoder which produces data which are from different stations. You can use the <code>state['identifier']</code> variable to indicate the station this data is from (even though station ID should be among the variables produced). This can be used as a trigger for decoders which make data which do not logically fit into a single table. </p>
+                        <p><b>Because the tabular-typing and 'stations' example is unstandard, it will be important to define a single protocol for the usage of the <code>Decoder.state</code> attribute, so end users can have predictable results.</b></p>
+                        <p> Additionally a decoder can define its own state dictionary keys, again for usage by a process running a decoder.</p>
+                        <p>An example of this usage </p>
+                        <pre><code>station= "KSLC"
+for data in decoder.decode(source, generator=True):
+    if decoder.state['identifier'] is not False:
+        # then there are multiple identifiers
+        station = decoder.state['identifier']
+    write_data_function(station, data)</code></pre>
+                    </dd>
+                </dl>
                 <h4>Initialization</h4>
                 <p>
                     A <code>Decoder</code> object is initialized with one or two keyword
                     arguments
-                    <pre><code>__init__(vars=False, inherit=False, fixed_vars={})</code></pre>
+                    <pre><code>Decoder(vars=False, inherit=False, fixed_vars={})</code></pre>
                     <dl>
                         <dt>vars</dt>
                         <dd>A description of the contained variables (Ideally a <code>VariableList</code> object)</dd>
@@ -464,7 +474,7 @@ for data in dec.decode(src):
                 <dt><pre class="python"><code>read_lines( yieldcount, filehandle )</code></pre></dt>
                 <dd>Read a file, line by line, and call the <code>self.on_line()</code> method for every line it encounters. The function accumulates the data returned from <code>self.on_line()</code>, and at the end returns a list of the produced data. For every <code>yieldcount</code> number of observations returned (lines read with <code>self.on_line()</code> that do not return <code>False</code>) the entire list of datapoints is <code>yield</code>ed, and the list resets.</dd>
                 
-                <dt><pre class="python"><code>read_chunks( yieldount, filehandle [begin, [end] ]  )</code></pre></dt>
+                <dt><pre class="python"><code>read_chunks( yieldcount, filehandle [begin, [end] ]  )</code></pre></dt>
                 <dd>
                     <p>Read a file as chunks, identified by either a <code>begin</code> character, such as a <code>BOM</code> or an <code>end</code> character/string. You can also specify both. The <code>self.on_chunk()</code> method is called on each chunk read, and the data returned from <code>self.on_chunk()</code> is appended to a list, which is returned at the end.</p><p>
                     Either <code>begin</code> or <code>end</code> must be specified.
@@ -712,12 +722,14 @@ for data in dec.decode(src):
                         Return the dictionary of stored values for every stored value in a list 
                         of dictionaries.
                     </dd>
-                    <dt><pre><code>tables_desc()</code></pre></dt>
+                    <dt><pre><code>dtype()</code></pre></dt>
                     <dd>
                         Return a numpy recarray-compliant dtype statement. The current
                         name reflects that this was desgined for integration of the output
                         datatypes into Pytables.
                     </dd>
+                   <dt><pre><code>tables_desc()</code></pre></dt>
+                   <dd><span class="label label-danger">Deprecated</span> alias to <code>VariableList().dtype()</code></dd>
                <h3>FixedVariableList Class</h3>
                <p>
                     A class similar to <code>VariableList</code>, except instead of shape
